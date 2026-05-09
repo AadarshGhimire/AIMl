@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6CS012 – Tutorial 2 MCQ Exam Prep | Softmax Regression & ERM</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2234;
+    --border: #1e2d47;
+    --accent: #3b82f6;
+    --accent2: #f59e0b;
+    --accent3: #10b981;
+    --danger: #ef4444;
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --correct: #064e3b;
+    --correct-border: #10b981;
+    --wrong: #450a0a;
+    --wrong-border: #ef4444;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+    --display: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #0f1629 0%, #1a1040 50%, #0f1629 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 2rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -10%;
+    width: 60%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(59,130,246,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .module-tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .module-tag::before { content: '▶'; font-size: 0.6rem; }
+  .header h1 {
+    font-family: var(--display);
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+  .header h1 span { color: var(--accent); }
+  .header p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    font-family: var(--sans);
+    font-weight: 300;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .stat-chip {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+  .stat-chip.blue { border-color: var(--accent); color: var(--accent); background: rgba(59,130,246,0.08); }
+  .stat-chip.amber { border-color: var(--accent2); color: var(--accent2); background: rgba(245,158,11,0.08); }
+  .stat-chip.green { border-color: var(--accent3); color: var(--accent3); background: rgba(16,185,129,0.08); }
+
+  /* Score Dashboard */
+  .score-dashboard {
+    max-width: 960px;
+    margin: 1.5rem auto 0;
+    padding: 0 1rem;
+  }
+  .score-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .score-left { display: flex; align-items: center; gap: 1rem; }
+  .score-number {
+    font-family: var(--display);
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .score-label { font-size: 0.8rem; color: var(--text-muted); font-family: var(--mono); }
+  .score-right { display: flex; gap: 1.5rem; }
+  .mini-stat { text-align: center; }
+  .mini-stat .val { font-family: var(--display); font-size: 1.3rem; font-weight: 700; }
+  .mini-stat .lbl { font-size: 0.7rem; color: var(--text-muted); font-family: var(--mono); }
+  .correct-val { color: var(--accent3); }
+  .wrong-val { color: var(--danger); }
+  .unanswered-val { color: var(--accent2); }
+
+  /* Progress bar */
+  .progress-wrap { background: var(--border); border-radius: 2px; height: 4px; margin-top: 0.8rem; }
+  .progress-fill { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--accent), var(--accent3)); width: 0%; transition: width 0.4s ease; }
+
+  /* Controls */
+  .controls {
+    max-width: 960px;
+    margin: 1rem auto 0;
+    padding: 0 1rem;
+    display: flex;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 0.55rem 1.1rem;
+    border-radius: 5px;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-transform: uppercase;
+  }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #2563eb; }
+  .btn-ghost { background: transparent; border-color: var(--border); color: var(--text-dim); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-amber { background: transparent; border-color: var(--accent2); color: var(--accent2); }
+  .btn-amber:hover { background: rgba(245,158,11,0.1); }
+
+  /* Section header */
+  .section-header {
+    max-width: 960px;
+    margin: 2rem auto 0;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .section-label {
+    font-family: var(--display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .section-divider { flex: 1; height: 1px; background: var(--border); }
+  .section-count { font-family: var(--mono); font-size: 0.7rem; color: var(--text-muted); }
+
+  /* Main */
+  main { max-width: 960px; margin: 0 auto; padding: 1rem 1rem 4rem; }
+
+  /* Question card */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .q-card:hover { border-color: #2a3f5f; }
+  .q-card.answered-correct { border-color: var(--correct-border); }
+  .q-card.answered-wrong { border-color: var(--wrong-border); }
+
+  .q-header {
+    padding: 1rem 1.2rem 0.7rem;
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+  .q-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.25);
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    white-space: nowrap;
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+  }
+  .q-num.topic-erm { color: #a78bfa; background: rgba(167,139,250,0.1); border-color: rgba(167,139,250,0.25); }
+  .q-num.topic-softmax { color: #34d399; background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.25); }
+  .q-num.topic-gd { color: #fb923c; background: rgba(251,146,60,0.1); border-color: rgba(251,146,60,0.25); }
+  .q-num.topic-eval { color: #f472b6; background: rgba(244,114,182,0.1); border-color: rgba(244,114,182,0.25); }
+  .q-num.topic-code { color: #38bdf8; background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.25); }
+  .q-num.topic-limit { color: #fbbf24; background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.25); }
+
+  .q-text {
+    font-size: 0.92rem;
+    color: var(--text);
+    font-weight: 400;
+    line-height: 1.55;
+  }
+  .q-text code {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    background: var(--surface2);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    color: #93c5fd;
+  }
+
+  /* Options */
+  .options { padding: 0 1.2rem 1rem; display: flex; flex-direction: column; gap: 0.4rem; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 0.65rem 0.8rem;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+  }
+  .option:hover { border-color: var(--accent); background: rgba(59,130,246,0.05); }
+  .option.selected { border-color: var(--accent); background: rgba(59,130,246,0.1); }
+  .option.correct-answer { border-color: var(--correct-border) !important; background: rgba(16,185,129,0.1) !important; }
+  .option.wrong-answer { border-color: var(--wrong-border) !important; background: rgba(239,68,68,0.1) !important; }
+  .option.disabled { cursor: default; }
+  .option-key {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    background: var(--surface2);
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    flex-shrink: 0;
+    min-width: 1.6rem;
+    text-align: center;
+    margin-top: 0.1rem;
+  }
+  .option.correct-answer .option-key { color: var(--accent3); background: rgba(16,185,129,0.15); }
+  .option.wrong-answer .option-key { color: var(--danger); background: rgba(239,68,68,0.15); }
+  .option-text { font-size: 0.87rem; color: var(--text-dim); line-height: 1.45; }
+  .option-text code { font-family: var(--mono); font-size: 0.8rem; background: var(--surface2); padding: 0.1em 0.3em; border-radius: 3px; color: #93c5fd; }
+
+  /* Explanation */
+  .explanation {
+    display: none;
+    margin: 0 1.2rem 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: 5px;
+    border-left: 3px solid var(--accent3);
+    background: rgba(16,185,129,0.06);
+  }
+  .explanation.show { display: block; }
+  .explanation.wrong-exp { border-left-color: var(--danger); background: rgba(239,68,68,0.06); }
+  .exp-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent3);
+    margin-bottom: 0.4rem;
+  }
+  .explanation.wrong-exp .exp-label { color: var(--danger); }
+  .exp-text { font-size: 0.84rem; color: var(--text-dim); line-height: 1.6; }
+  .exp-text strong { color: var(--text); }
+  .exp-text code { font-family: var(--mono); font-size: 0.78rem; background: rgba(0,0,0,0.3); padding: 0.1em 0.35em; border-radius: 3px; color: #93c5fd; }
+  .exp-text .formula {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    margin: 0.5rem 0;
+    padding: 0.5rem 0.8rem;
+    background: rgba(0,0,0,0.25);
+    border-radius: 4px;
+    color: #a5f3fc;
+    line-height: 1.8;
+  }
+
+  /* Step-by-step */
+  .step-block { margin-top: 0.6rem; }
+  .step { display: flex; gap: 0.6rem; margin-bottom: 0.4rem; align-items: flex-start; }
+  .step-n {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    background: rgba(59,130,246,0.2);
+    color: var(--accent);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 0.12rem;
+  }
+  .step-text { font-size: 0.83rem; color: var(--text-dim); line-height: 1.5; }
+
+  /* Topic filter */
+  .filter-bar {
+    max-width: 960px;
+    margin: 0 auto 0;
+    padding: 0.8rem 1rem 0;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-label { font-family: var(--mono); font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .filter-btn {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .filter-btn.active, .filter-btn:hover { color: #fff; border-color: var(--accent); background: rgba(59,130,246,0.12); }
+
+  /* Floating result badge */
+  .result-badge {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+  }
+  .badge-correct { background: rgba(16,185,129,0.2); color: var(--accent3); border: 1px solid var(--correct-border); }
+  .badge-wrong { background: rgba(239,68,68,0.2); color: var(--danger); border: 1px solid var(--wrong-border); }
+
+  .q-header { position: relative; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .score-right { gap: 0.8rem; }
+    .score-number { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="module-tag">6CS012 · Artificial Intelligence & Machine Learning · Tutorial 02</div>
+    <h1>MCQ <span>Exam Prep</span><br>Softmax Regression & ERM Framework</h1>
+    <p>50 high-probability exam questions · Click an option to answer · Explanations with step-wise solutions</p>
+    <div class="stats-bar">
+      <span class="stat-chip blue">50 Questions</span>
+      <span class="stat-chip amber">6 Topic Areas</span>
+      <span class="stat-chip green">Iris Dataset · Gradient Descent · Cross-Entropy</span>
+    </div>
+  </div>
+</div>
+
+<div class="score-dashboard">
+  <div class="score-panel">
+    <div class="score-left">
+      <div>
+        <div class="score-number" id="scoreDisplay">0%</div>
+        <div class="score-label">SCORE</div>
+      </div>
+      <div class="progress-wrap" style="width:200px;">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+    <div class="score-right">
+      <div class="mini-stat"><div class="val correct-val" id="correctCount">0</div><div class="lbl">Correct</div></div>
+      <div class="mini-stat"><div class="val wrong-val" id="wrongCount">0</div><div class="lbl">Wrong</div></div>
+      <div class="mini-stat"><div class="val unanswered-val" id="unansweredCount">50</div><div class="lbl">Left</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn btn-primary" onclick="revealAll()">Reveal All Answers</button>
+  <button class="btn btn-ghost" onclick="resetAll()">Reset Quiz</button>
+  <button class="btn btn-amber" onclick="showOnlyWrong()">Show Wrong Only</button>
+</div>
+
+<div class="filter-bar">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-btn active" onclick="filterTopic('all', this)">All</button>
+  <button class="filter-btn" onclick="filterTopic('erm', this)">ERM Framework</button>
+  <button class="filter-btn" onclick="filterTopic('softmax', this)">Softmax Model</button>
+  <button class="filter-btn" onclick="filterTopic('gd', this)">Gradient Descent</button>
+  <button class="filter-btn" onclick="filterTopic('eval', this)">Evaluation</button>
+  <button class="filter-btn" onclick="filterTopic('code', this)">Implementation</button>
+  <button class="filter-btn" onclick="filterTopic('limit', this)">Limitations</button>
+</div>
+
+<div class="section-header">
+  <span class="section-label">Questions</span>
+  <div class="section-divider"></div>
+  <span class="section-count" id="visibleCount">50 visible</span>
+</div>
+
+<main id="quizMain"></main>
+
+<script>
+const questions = [
+  // ─── ERM Framework (Q1–Q12) ───
+  {
+    id:1, topic:'erm',
+    q:"What does ERM stand for in the context of machine learning?",
+    opts:["Empirical Risk Minimization","Error Reduction Method","Expectation Risk Maximization","Estimated Regression Model"],
+    ans:0,
+    exp:`<strong>Empirical Risk Minimization (ERM)</strong> is a fundamental principle in statistical learning theory. The word "empirical" means it works on observed/sample data rather than the true unknown data distribution. The goal is to <em>minimize</em> the <em>risk</em> (expected loss) estimated from that sample.`
+  },
+  {
+    id:2, topic:'erm',
+    q:"In the ERM framework, the true risk R(f) is formally defined as:",
+    opts:[
+      "R(f) = (1/n) Σ ℓ(f(xᵢ), yᵢ)",
+      "R(f) = E₍ₓ,ᵧ₎∼𝒟 [ℓ(f(x), y)]",
+      "R(f) = argmin_f Σ ℓ(f(xᵢ), yᵢ)",
+      "R(f) = max_f E[ℓ(f(x), y)]"
+    ],
+    ans:1,
+    exp:`The <strong>true risk</strong> is the expected loss over the <em>entire data distribution 𝒟</em>: <span class="formula">R(f) = E₍ₓ,ᵧ₎∼𝒟 [ℓ(f(x), y)]</span>Since 𝒟 is unknown, we can never compute this directly — that's why we approximate it using empirical risk on a finite training set.`
+  },
+  {
+    id:3, topic:'erm',
+    q:"The empirical risk R̂(f) computed on a training set S = {(xᵢ, yᵢ)}ⁿᵢ₌₁ is:",
+    opts:[
+      "R̂(f) = max over all i of ℓ(f(xᵢ), yᵢ)",
+      "R̂(f) = Σ ℓ(f(xᵢ), yᵢ)",
+      "R̂(f) = (1/n) Σ ℓ(f(xᵢ), yᵢ)",
+      "R̂(f) = min over f of ℓ(f(xᵢ), yᵢ)"
+    ],
+    ans:2,
+    exp:`The empirical risk is simply the <strong>average loss over all training samples</strong>: <span class="formula">R̂(f) = (1/n) Σᵢ₌₁ⁿ ℓ(f(xᵢ), yᵢ)</span>This acts as a <em>proxy</em> for the true risk. The larger n, the better the approximation (by the Law of Large Numbers).`
+  },
+  {
+    id:4, topic:'erm',
+    q:"Which of the following best describes the role of the ERM framework in deep learning?",
+    opts:[
+      "It provides an exact solution to the true risk minimization problem",
+      "It serves as the foundation for training models by minimizing loss on finite training data",
+      "It guarantees zero training error for any model",
+      "It eliminates the need for optimization algorithms"
+    ],
+    ans:1,
+    exp:`ERM is the <strong>foundation</strong> of most ML training pipelines. Because the true data distribution 𝒟 is unknown, we minimize a surrogate — the empirical risk (average training loss). Algorithms like gradient descent solve this empirical minimization problem.`
+  },
+  {
+    id:5, topic:'erm',
+    q:"In the ERM framework diagram shown in the tutorial, the 'Model Fitting Problem' specifically involves:",
+    opts:[
+      "Choosing the best model architecture from a set of candidates",
+      "Training a chosen model by minimizing the training loss via optimization",
+      "Evaluating the model on a held-out test set",
+      "Selecting the dataset to use"
+    ],
+    ans:1,
+    exp:`The tutorial distinguishes two problems: <strong>Model Fitting</strong> — optimizing parameters W, b to minimize training loss for a fixed model — and <strong>Model Selection</strong> — comparing different model classes. The feedback loop through Optimization → Training Loss → Model update is the model-fitting problem.`
+  },
+  {
+    id:6, topic:'erm',
+    q:"A decision function f: 𝒳 → 𝒜 maps:",
+    opts:[
+      "Labels to features",
+      "Loss values to predictions",
+      "Input features to actions (predictions)",
+      "Model parameters to gradients"
+    ],
+    ans:2,
+    exp:`A <strong>decision function</strong> (also called prediction function) maps an input x ∈ 𝒳 to an action a ∈ 𝒜: <span class="formula">f : 𝒳 → 𝒜   i.e.   x ↦ f(x)</span>In classification, the action is assigning a class label. In regression, it is predicting a continuous value.`
+  },
+  {
+    id:7, topic:'erm',
+    q:"If the output space 𝒴 ⊂ ℝ (real numbers), the task is classified as:",
+    opts:["Classification","Clustering","Regression","Dimensionality Reduction"],
+    ans:2,
+    exp:`When 𝒴 ⊂ ℝ, we are predicting a <strong>continuous value</strong> → this is a <strong>Regression Task</strong>. When 𝒴 ∈ 𝒞 = {0,1,...,K}, we assign class labels → <strong>Classification Task</strong>.`
+  },
+  {
+    id:8, topic:'erm',
+    q:"The loss function for regression (Mean Squared Error) is:",
+    opts:[
+      "ℓ(f̂(x), y) = −y log f̂(x)",
+      "ℓ(f̂(x), y) = (f̂(x) − y)²",
+      "ℓ(f̂(x), y) = |f̂(x) − y|",
+      "ℓ(f̂(x), y) = f̂(x) / y"
+    ],
+    ans:1,
+    exp:`For regression, the per-sample loss is the <strong>squared difference</strong> between prediction and truth: <span class="formula">ℓ(f̂(x), y) = (f̂(x) − y)²</span>The cost function averages this: R̂(f) = (1/n) Σ (f̂(xᵢ) − yᵢ)² — the Mean Squared Error (MSE).`
+  },
+  {
+    id:9, topic:'erm',
+    q:"The loss function for classification problems is called:",
+    opts:["Mean Squared Error","Hinge Loss","Cross-Entropy Loss","Absolute Error"],
+    ans:2,
+    exp:`For classification, the standard loss is <strong>Cross-Entropy Loss</strong>: <span class="formula">ℓ(f̂(x), y) = −y log f̂(x)</span>For multiclass, this extends to Categorical Cross-Entropy. It penalizes the model heavily when it assigns low probability to the correct class.`
+  },
+  {
+    id:10, topic:'erm',
+    q:"The cost function / empirical risk R̂(f) for a classification problem with n samples is:",
+    opts:[
+      "R̂(f) = (1/n) Σ (f̂(xᵢ) − yᵢ)²",
+      "R̂(f) = (1/n) Σ −yᵢ log f̂(xᵢ)",
+      "R̂(f) = max(f̂(xᵢ) − yᵢ)",
+      "R̂(f) = Σ yᵢ / f̂(xᵢ)"
+    ],
+    ans:1,
+    exp:`The classification cost function (empirical risk) is: <span class="formula">R̂(f) = (1/n) Σᵢ₌₁ⁿ [−yᵢ log f̂(xᵢ)]</span>This is the average negative log-likelihood. Minimizing this pushes the model to assign high probability to the correct class.`
+  },
+  {
+    id:11, topic:'erm',
+    q:"In gradient-based optimization, the update rule for the weight w is:",
+    opts:[
+      "w⁽ᵗ⁺¹⁾ = w⁽ᵗ⁾ + η ∇ᵥR̂(f)",
+      "w⁽ᵗ⁺¹⁾ = w⁽ᵗ⁾ − η ∇ᵥR̂(f)",
+      "w⁽ᵗ⁺¹⁾ = η · ∇ᵥR̂(f)",
+      "w⁽ᵗ⁺¹⁾ = w⁽ᵗ⁾ / η"
+    ],
+    ans:1,
+    exp:`Gradient descent <strong>subtracts</strong> the gradient scaled by learning rate η: <span class="formula">w⁽ᵗ⁺¹⁾ = w⁽ᵗ⁾ − η ∇ᵥR̂(f_{w,b})</span>We move in the direction of <em>steepest descent</em> (negative gradient) to reduce the loss. Adding would go uphill — that's gradient ascent.`
+  },
+  {
+    id:12, topic:'erm',
+    q:"Which of the following is NOT one of the three main components of the ERM framework?",
+    opts:["A Decision Function","A Loss / Error Measure","An Optimization Technique","A Data Augmentation Strategy"],
+    ans:3,
+    exp:`The three components of ERM are: <strong>(1) Decision Function</strong> — the model f, <strong>(2) Error Measure</strong> — the loss function ℓ, and <strong>(3) Optimization Technique</strong> — e.g., gradient descent. Data Augmentation is a regularization/preprocessing technique, not a component of ERM itself.`
+  },
+
+  // ─── Softmax Model (Q13–Q25) ───
+  {
+    id:13, topic:'softmax',
+    q:"Softmax Regression is the generalization of which binary classification algorithm?",
+    opts:["Linear Regression","Decision Trees","Logistic Regression (Sigmoid)","Naive Bayes"],
+    ans:2,
+    exp:`Softmax regression (also called Multinomial Logistic Regression) generalizes <strong>Logistic Regression</strong>. While logistic regression uses the sigmoid function for 2 classes, softmax regression uses the <em>softmax function</em> to output probabilities over K ≥ 2 classes simultaneously.`
+  },
+  {
+    id:14, topic:'softmax',
+    q:"The linear pre-activation (logit) for sample xᵢ in softmax regression is computed as:",
+    opts:[
+      "zᵢ = softmax(Wxᵢ)",
+      "zᵢ = WᵀXᵢ + b",
+      "zᵢ = −log(Wxᵢ + b)",
+      "zᵢ = σ(Wxᵢ)"
+    ],
+    ans:1,
+    exp:`The <strong>logit</strong> (raw score before softmax) is a linear transformation: <span class="formula">zᵢ = WᵀXᵢ + b</span>where W ∈ ℝᵈˣᶜ is the weight matrix, xᵢ ∈ ℝᵈ is the feature vector, and b ∈ ℝᶜ is the bias. This produces a vector of C raw scores (one per class).`
+  },
+  {
+    id:15, topic:'softmax',
+    q:"The softmax function for class j given logit vector zᵢ is:",
+    opts:[
+      "softmax(zᵢ)ⱼ = zᵢⱼ / Σₖ zᵢₖ",
+      "softmax(zᵢ)ⱼ = exp(zᵢⱼ) / Σₖ₌₁ᶜ exp(zᵢₖ)",
+      "softmax(zᵢ)ⱼ = 1 / (1 + exp(−zᵢⱼ))",
+      "softmax(zᵢ)ⱼ = log(zᵢⱼ) / Σₖ log(zᵢₖ)"
+    ],
+    ans:1,
+    exp:`The softmax function exponentiates each logit and normalizes: <span class="formula">softmax(zᵢ)ⱼ = exp(zᵢⱼ) / Σₖ₌₁ᶜ exp(zᵢₖ),  ∀j ∈ {1,...,C}</span>This guarantees all outputs are in (0,1) and sum to 1 — a valid probability distribution over C classes.`
+  },
+  {
+    id:16, topic:'softmax',
+    q:"What property do the outputs of the softmax function always satisfy?",
+    opts:[
+      "All outputs are negative",
+      "All outputs are between 0 and 1, and they sum to 1",
+      "All outputs are between −1 and 1",
+      "The maximum output equals exactly 1"
+    ],
+    ans:1,
+    exp:`The softmax function produces a <strong>valid probability distribution</strong>: <span class="formula">∀j: 0 < softmax(z)ⱼ < 1   AND   Σⱼ softmax(z)ⱼ = 1</span>The exp() function ensures all values are positive; dividing by the sum normalizes them to sum to 1.`
+  },
+  {
+    id:17, topic:'softmax',
+    q:"The decision function (final class prediction) in softmax regression is:",
+    opts:[
+      "yₚᵣₑd = softmax(Wxᵢ + b)",
+      "yₚᵣₑd = argmaxᵢ P(Y=i | x, W, b)",
+      "yₚᵣₑd = sigmoid(Wxᵢ + b)",
+      "yₚᵣₑd = mean of all class probabilities"
+    ],
+    ans:1,
+    exp:`The predicted class is whichever class has the <strong>highest probability</strong>: <span class="formula">yₚᵣₑd = argmaxᵢ P(Y=i | x, W, b)</span>In code: <code>np.argmax(y_pred, axis=1)</code>. The argmax extracts the index of the maximum softmax output.`
+  },
+  {
+    id:18, topic:'softmax',
+    q:"In the softmax function implementation, numerical stability is achieved by:",
+    opts:[
+      "Adding a small constant ε to all logits",
+      "Dividing logits by their sum before exponentiation",
+      "Subtracting the maximum logit value from each logit before exponentiation",
+      "Taking the logarithm of the logits first"
+    ],
+    ans:2,
+    exp:`To prevent numerical overflow (exp of large numbers → infinity): <span class="formula">z_shifted = z − max(z)   (row-wise)</span><span class="formula">exp_z = exp(z_shifted)</span><span class="formula">softmax = exp_z / sum(exp_z)</span>Subtracting the max makes the largest logit = 0, so exp(0)=1 is the largest exponent. This doesn't change the output because: exp(zⱼ−max)/Σexp(zₖ−max) = exp(zⱼ)/Σexp(zₖ).`
+  },
+  {
+    id:19, topic:'softmax',
+    q:"In the Iris dataset used in the tutorial, the dimensions are:",
+    opts:[
+      "150 samples, 4 features, 2 classes",
+      "100 samples, 6 features, 3 classes",
+      "150 samples, 6 columns (including index & target), 3 classes",
+      "200 samples, 4 features, 3 classes"
+    ],
+    ans:2,
+    exp:`The Iris dataset has: <strong>n = 150 samples</strong>, d = 6 columns total (1 index + 4 feature columns + 1 target + 1 target_name), and <strong>C = 3 classes</strong> (Setosa, Versicolor, Virginica). As stated in the tutorial: "data-points i=150, dimension d=6, Number of Classes=3."`
+  },
+  {
+    id:20, topic:'softmax',
+    q:"Which encoding is applied to class labels before training softmax regression, and why?",
+    opts:[
+      "Label encoding only — integers are sufficient for softmax",
+      "One-Hot Encoding — because softmax outputs a probability per class and the loss requires a binary vector per sample",
+      "Ordinal encoding — because class order matters",
+      "Binary encoding — to reduce dimensionality"
+    ],
+    ans:1,
+    exp:`<strong>One-Hot Encoding</strong> is required because: the softmax outputs a vector of C probabilities, and the categorical cross-entropy loss computes the dot product y · log(ŷ). If y is an integer label (e.g., 2), this dot product is meaningless. As a one-hot vector [0,0,1], it selects only the log probability of the true class.`
+  },
+  {
+    id:21, topic:'softmax',
+    q:"In the data preprocessing code, the feature matrix X is extracted using:",
+    opts:[
+      "X = df.iloc[:, 0]",
+      "X = df.iloc[:, 1:-1].values  (columns 1 to second-last)",
+      "X = df['features'].values",
+      "X = df.iloc[:, -1].values"
+    ],
+    ans:1,
+    exp:`The code: <code>X = df.iloc[:, 1:-1].values</code> selects <em>all rows</em>, columns from index 1 to the second-to-last. This skips the first column (DataFrame index) and the last column (target label), extracting only the feature columns.`
+  },
+  {
+    id:22, topic:'softmax',
+    q:"The train-test split in the tutorial uses what ratio and what important parameter?",
+    opts:[
+      "70/30 split, random_state=0",
+      "80/20 split (test_size=0.2), random_state=42, stratify=y_one_hot",
+      "90/10 split, no stratification",
+      "60/40 split, stratify=y_encoded"
+    ],
+    ans:1,
+    exp:`From the code: <span class="formula">train_test_split(X, y_one_hot, test_size=0.2, random_state=42, stratify=y_one_hot)</span><strong>test_size=0.2</strong> → 80% train, 20% test. <strong>random_state=42</strong> → reproducibility. <strong>stratify=y_one_hot</strong> → ensures class proportions are maintained in both splits.`
+  },
+  {
+    id:23, topic:'softmax',
+    q:"The weight matrix W in softmax regression has shape:",
+    opts:[
+      "(n, c) where n=samples, c=classes",
+      "(d, c) where d=features, c=classes",
+      "(c, d) where c=classes, d=features",
+      "(n, d) where n=samples, d=features"
+    ],
+    ans:1,
+    exp:`W ∈ ℝᵈˣᶜ: <span class="formula">W shape = (d, c)</span>where d = number of features (input dimension) and c = number of classes. This allows the matrix multiplication: z = XW + b to produce (n,d)·(d,c) = (n,c) — one logit per class per sample.`
+  },
+  {
+    id:24, topic:'softmax',
+    q:"After computing logits z = XW + b, the shape of z (for n samples, C classes) is:",
+    opts:["(n,)", "(d, C)", "(n, C)", "(C, d)"],
+    ans:2,
+    exp:`Matrix shapes: X is (n,d), W is (d,C), b is (C,). <span class="formula">z = X @ W + b → (n,d)·(d,C) + (C,) = (n,C)</span>Each row i of z contains C logits (raw scores) for sample i — one score per class. Broadcasting adds b to each row.`
+  },
+  {
+    id:25, topic:'softmax',
+    q:"In the softmax function implementation, `keepdims=True` is used in `np.max(z, axis=1, keepdims=True)`. What is the purpose?",
+    opts:[
+      "To keep all values positive",
+      "To ensure the resulting array retains 2D shape (n,1) for proper broadcasting when subtracting from z (n,C)",
+      "To compute the maximum across all elements",
+      "To normalize the output between 0 and 1"
+    ],
+    ans:1,
+    exp:`Without <code>keepdims=True</code>, <code>np.max(z, axis=1)</code> would return shape <code>(n,)</code> — a 1D array. When subtracting from z with shape <code>(n,C)</code>, NumPy broadcasting would fail or give wrong results. With <code>keepdims=True</code>, the result is <code>(n,1)</code> which broadcasts correctly across all C columns.`
+  },
+
+  // ─── Gradient Descent (Q26–Q36) ───
+  {
+    id:26, topic:'gd',
+    q:"The Categorical Cross-Entropy Loss for a single sample xᵢ with one-hot label yᵢ and predicted probabilities ŷᵢ is:",
+    opts:[
+      "ℓ(yᵢ, ŷᵢ) = (yᵢ − ŷᵢ)²",
+      "ℓ(yᵢ, ŷᵢ) = −Σₖ₌₁ᶜ yᵢₖ log(ŷᵢₖ)",
+      "ℓ(yᵢ, ŷᵢ) = Σₖ yᵢₖ / ŷᵢₖ",
+      "ℓ(yᵢ, ŷᵢ) = max(0, 1 − yᵢ · ŷᵢ)"
+    ],
+    ans:1,
+    exp:`The <strong>Categorical Cross-Entropy</strong> loss: <span class="formula">ℓ(yᵢ, ŷᵢ) = −Σₖ₌₁ᶜ yᵢₖ log(ŷᵢₖ)</span>Since yᵢ is one-hot (only one yᵢₖ = 1, rest = 0), this simplifies to <code>−log(ŷᵢ_correct)</code> — the negative log probability of the correct class. Maximizing the correct class probability = minimizing this loss.`
+  },
+  {
+    id:27, topic:'gd',
+    q:"The full cost function (empirical risk) for softmax regression over n samples is:",
+    opts:[
+      "R̂ = −(1/n) Σᵢ Σₖ yᵢₖ log(ŷᵢₖ)",
+      "R̂ = (1/n) Σᵢ Σₖ yᵢₖ · ŷᵢₖ",
+      "R̂ = −Σᵢ Σₖ yᵢₖ log(ŷᵢₖ)",
+      "R̂ = (1/n) Σᵢ (argmax(ŷᵢ) − yᵢ)²"
+    ],
+    ans:0,
+    exp:`The cost function averages the per-sample cross-entropy: <span class="formula">R̂ = −(1/n) Σᵢ₌₁ⁿ Σₖ₌₁ᶜ yᵢₖ log(ŷᵢₖ)</span>This is the <em>mean</em> cross-entropy loss across all training examples. Minimizing this drives the model to assign high probabilities to the correct classes.`
+  },
+  {
+    id:28, topic:'gd',
+    q:"The gradient of the Categorical Cross-Entropy Loss with respect to the weight matrix W is:",
+    opts:[
+      "∂ℒ/∂W = (1/n) Σᵢ (ŷᵢ + yᵢ) xᵢᵀ",
+      "∂ℒ/∂W = (1/n) XᵀX",
+      "∂ℒ/∂W = (1/n) Σᵢ (ŷᵢ − yᵢ) xᵢᵀ  = (1/n) Xᵀ(Ŷ−Y)",
+      "∂ℒ/∂W = (1/n) Σᵢ yᵢ log(xᵢ)"
+    ],
+    ans:2,
+    exp:`The gradient w.r.t. W has an elegant closed form: <span class="formula">∂ℒ/∂W = (1/n) Σᵢ (ŷᵢ − yᵢ) xᵢᵀ</span>In matrix form: <span class="formula">grad_W = (1/n) Xᵀ @ (Ŷ − Y)</span>where (ŷᵢ − yᵢ) is the prediction error (predicted minus true one-hot). In code: <code>np.dot(X.T, (y_pred - y)) / n</code>`
+  },
+  {
+    id:29, topic:'gd',
+    q:"The gradient of the Categorical Cross-Entropy Loss with respect to the bias vector b is:",
+    opts:[
+      "∂ℒ/∂b = (1/n) Σᵢ (ŷᵢ − yᵢ) summed over all features",
+      "∂ℒ/∂b = (1/n) Σᵢ (ŷᵢ − yᵢ)  [mean of prediction errors across samples]",
+      "∂ℒ/∂b = (1/n) Σᵢ yᵢ",
+      "∂ℒ/∂b = Σᵢ ŷᵢ − yᵢ"
+    ],
+    ans:1,
+    exp:`The gradient w.r.t. bias b: <span class="formula">∂ℒ/∂b = (1/n) Σᵢ₌₁ⁿ (ŷᵢ − yᵢ)</span>In matrix form, this sums prediction errors across all n samples and divides by n: <code>np.sum(y_pred - y, axis=0) / n</code>. The result has shape (C,) matching the bias vector shape.`
+  },
+  {
+    id:30, topic:'gd',
+    q:"In the gradient descent algorithm for softmax regression, the weight update rule is:",
+    opts:[
+      "W ← W + α · ∂ℒ/∂W",
+      "W ← W − α · ∂ℒ/∂W",
+      "W ← W · (1 − α · ∂ℒ/∂W)",
+      "W ← α / ∂ℒ/∂W"
+    ],
+    ans:1,
+    exp:`Gradient descent moves <strong>opposite</strong> to the gradient direction: <span class="formula">W ← W − α · ∂ℒ/∂W</span><span class="formula">b ← b − α · ∂ℒ/∂b</span>α (or η) is the <strong>learning rate</strong>. Adding the gradient would increase loss (gradient ascent). In code: <code>W -= alpha * grad_W</code>`
+  },
+  {
+    id:31, topic:'gd',
+    q:"What is the role of the learning rate α in gradient descent?",
+    opts:[
+      "It determines the number of training samples",
+      "It controls the size of each parameter update step",
+      "It sets the maximum number of iterations",
+      "It defines the number of classes"
+    ],
+    ans:1,
+    exp:`The learning rate α controls the <strong>step size</strong> of parameter updates. Too large → overshoots the minimum, may diverge. Too small → converges very slowly. A good learning rate (e.g., α = 0.1 as in the tutorial) finds a balance. Common choices: 0.001, 0.01, 0.1.`
+  },
+  {
+    id:32, topic:'gd',
+    q:"In the tutorial code, weights W are initialized as:",
+    opts:[
+      "W = np.zeros((d, c))",
+      "W = np.ones((d, c))",
+      "W = np.random.randn(d, c) * 0.01",
+      "W = np.eye(d, c)"
+    ],
+    ans:2,
+    exp:`From the code: <code>W = np.random.randn(d, c) * 0.01</code> — <strong>small random values</strong>. Why small? To avoid saturation of activation functions and ensure symmetry breaking. If all weights were 0, all neurons would compute identical gradients (symmetry problem). The 0.01 scale keeps initial logits near zero.`
+  },
+  {
+    id:33, topic:'gd',
+    q:"The tutorial uses n_iter = 1000 iterations and prints cost every 100 iterations. What does the 'cost history' curve ideally show?",
+    opts:[
+      "An increasing trend showing the model is learning",
+      "A flat line showing no change",
+      "A monotonically decreasing trend indicating convergence",
+      "An oscillating pattern"
+    ],
+    ans:2,
+    exp:`A well-configured gradient descent should show the <strong>cost monotonically decreasing</strong> over iterations — the model is converging. If the curve oscillates wildly → learning rate too large. If it decreases extremely slowly → learning rate too small. A smooth downward curve → appropriate learning rate.`
+  },
+  {
+    id:34, topic:'gd',
+    q:"In the gradient computation code: `grad_W = np.dot(X.T, (y_pred - y)) / n` — why do we use X.T (transpose of X)?",
+    opts:[
+      "Because X.T makes the matrix square",
+      "Because the gradient formula requires Xᵀ(Ŷ-Y) to produce shape (d,c) matching W's shape",
+      "Because transposing X sorts the features",
+      "To avoid numerical overflow"
+    ],
+    ans:1,
+    exp:`Shapes: X is (n,d), (y_pred - y) is (n,c). <span class="formula">X.T is (d,n)   and   (y_pred-y) is (n,c)</span><span class="formula">X.T @ (y_pred-y) → (d,n)·(n,c) = (d,c)</span>This matches the shape of W (d,c), so the gradient can be subtracted from W directly.`
+  },
+  {
+    id:35, topic:'gd',
+    q:"What is the purpose of `epsilon = 1e-12` in the loss function `loss_softmax`?",
+    opts:[
+      "To increase training speed",
+      "To set the learning rate",
+      "To clip predicted probabilities away from 0 to prevent log(0) = -infinity",
+      "To add regularization"
+    ],
+    ans:2,
+    exp:`<code>y_pred = np.clip(y_pred, epsilon, 1.0 - epsilon)</code> prevents <code>log(0)</code> which equals −∞ and would make the loss undefined/NaN. Even though softmax theoretically never outputs exactly 0, floating-point arithmetic can produce very small values. Clipping to [1e-12, 1-1e-12] ensures numerical stability.`
+  },
+  {
+    id:36, topic:'gd',
+    q:"Name three common optimization methods mentioned in the ERM optimization slide.",
+    opts:[
+      "Newton's Method, Gaussian Elimination, Linear Programming",
+      "Gradient Descent, Stochastic Gradient Descent (SGD), Adam",
+      "Random Search, Grid Search, Bayesian Optimization",
+      "K-Means, DBSCAN, Agglomerative Clustering"
+    ],
+    ans:1,
+    exp:`The tutorial mentions three: <strong>Gradient Descent</strong> (full-batch, uses all data per update), <strong>Stochastic Gradient Descent (SGD)</strong> (uses one sample or mini-batch per update, faster but noisier), and <strong>Adam</strong> (adaptive learning rates, combines momentum + RMSProp — state of the art for deep learning).`
+  },
+
+  // ─── Evaluation (Q37–Q43) ───
+  {
+    id:37, topic:'eval',
+    q:"In a confusion matrix for a 3-class problem, what does the diagonal represent?",
+    opts:[
+      "Misclassified samples",
+      "Correctly classified samples (True positives for each class)",
+      "The number of training samples",
+      "The predicted probabilities"
+    ],
+    ans:1,
+    exp:`In a confusion matrix, <strong>diagonal elements</strong> represent <em>correct predictions</em>: the true class matches the predicted class. Off-diagonal elements represent misclassifications (e.g., true class is 0 but predicted as 1). For a 3-class problem, we get a 3×3 matrix with 3 diagonal entries.`
+  },
+  {
+    id:38, topic:'eval',
+    q:"Using the email classification example in the tutorial (urgent/normal/spam), what is the precision for the 'urgent' class given: urgent row = [8, 10, 1]?",
+    opts:["8/16", "8/19", "8/(8+10+1)", "10/19"],
+    ans:2,
+    exp:`<strong>Precision</strong> for a class = TP / (TP + FP) = correctly predicted as urgent / all predicted as urgent. <span class="formula">Precisionᵤᵣᵍₑₙₜ = 8 / (8 + 10 + 1) = 8/19 ≈ 0.421</span>The denominator is the sum of the <em>row</em> (all samples predicted as 'urgent').`
+  },
+  {
+    id:39, topic:'eval',
+    q:"In the tutorial's email confusion matrix, the recall for 'spam' class with column = [1, 50, 200] is:",
+    opts:[
+      "200/(200+50+1)",
+      "200/(200+30+3)",
+      "200/(1+50+200)",
+      "200/233"
+    ],
+    ans:2,
+    exp:`<strong>Recall</strong> for a class = TP / (TP + FN) = correctly predicted as spam / all actual spam samples. <span class="formula">Recallₛₚₐₘ = 200 / (1 + 50 + 200) = 200/251 ≈ 0.797</span>The denominator is the sum of the <em>column</em> (all actual spam samples).`
+  },
+  {
+    id:40, topic:'eval',
+    q:"The `evaluate_classification` function in the tutorial uses `average='weighted'` for precision/recall. What does 'weighted' averaging do?",
+    opts:[
+      "Gives equal weight to all classes regardless of size",
+      "Weights each class's metric by the number of true samples for that class (accounts for class imbalance)",
+      "Only considers the majority class",
+      "Randomly weights the classes"
+    ],
+    ans:1,
+    exp:`<strong>Weighted average</strong> computes metrics per class then takes a weighted mean using the <em>support</em> (number of true instances) of each class. This means larger classes contribute more to the overall metric. Useful when classes are imbalanced. Alternative: 'macro' (equal weight per class), 'micro' (globally pooled).`
+  },
+  {
+    id:41, topic:'eval',
+    q:"F1-Score is defined as the harmonic mean of precision and recall. The formula is:",
+    opts:[
+      "F1 = (Precision + Recall) / 2",
+      "F1 = 2 × (Precision × Recall) / (Precision + Recall)",
+      "F1 = Precision / Recall",
+      "F1 = √(Precision × Recall)"
+    ],
+    ans:1,
+    exp:`The <strong>F1-Score</strong> is the harmonic mean: <span class="formula">F1 = 2 × (Precision × Recall) / (Precision + Recall)</span>The harmonic mean penalizes extreme imbalance between precision and recall. A high F1 requires <em>both</em> precision and recall to be high. It's more informative than accuracy for imbalanced datasets.`
+  },
+  {
+    id:42, topic:'eval',
+    q:"In the final evaluation code, `y_test_labels = np.argmax(y_test, axis=1)` converts:",
+    opts:[
+      "Predicted probabilities to one-hot vectors",
+      "One-hot encoded true labels back to integer class indices",
+      "Integer labels to one-hot vectors",
+      "Logits to probabilities"
+    ],
+    ans:1,
+    exp:`After train-test split, <code>y_test</code> is <em>one-hot encoded</em> (shape n×C). <code>np.argmax(y_test, axis=1)</code> finds the index of the '1' in each row → converts back to <strong>integer class labels</strong> (0, 1, or 2 for Iris). This is needed for <code>confusion_matrix(y_true, y_pred)</code> which expects integer labels.`
+  },
+  {
+    id:43, topic:'eval',
+    q:"Which sklearn function is imported to compute the confusion matrix in the tutorial?",
+    opts:[
+      "from sklearn.linear_model import confusion_matrix",
+      "from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score",
+      "from sklearn.preprocessing import confusion_matrix",
+      "from sklearn.evaluation import confusion_matrix"
+    ],
+    ans:1,
+    exp:`From the tutorial code: <span class="formula">from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score</span>All classification evaluation metrics are in <code>sklearn.metrics</code>. The module is <code>metrics</code>, not <code>evaluation</code> or <code>linear_model</code>.`
+  },
+
+  // ─── Implementation (Q44–Q47) ───
+  {
+    id:44, topic:'code',
+    q:"In `compute_gradient_softmax`, the bias gradient is computed as: `grad_b = np.sum(y_pred - y, axis=0) / n`. Why `axis=0`?",
+    opts:[
+      "To sum across classes (columns)",
+      "To sum across samples (rows), reducing shape from (n,C) to (C,) — matching bias shape",
+      "To transpose the matrix",
+      "To compute the mean across all elements"
+    ],
+    ans:1,
+    exp:`<code>y_pred - y</code> has shape (n, C). Summing with <code>axis=0</code> collapses the <em>rows</em> (samples): <span class="formula">(n,C) summed over axis=0 → (C,)</span>This gives one gradient value per class (bias element). The result has shape (C,) matching the bias vector b.`
+  },
+  {
+    id:45, topic:'code',
+    q:"The `gradient_descent_softmax` function prints cost `if i % 100 == 0 or i == n_iter - 1`. What does `i == n_iter - 1` ensure?",
+    opts:[
+      "It resets the cost history",
+      "It always prints the final iteration's cost (index n_iter-1 = last iteration)",
+      "It stops training early",
+      "It computes the gradient only at the last iteration"
+    ],
+    ans:1,
+    exp:`Python uses 0-based indexing. If n_iter=1000, iterations run from i=0 to i=999. <code>i == n_iter - 1</code> = <code>i == 999</code> ensures the <strong>last iteration's cost is always printed</strong>, even if 999 % 100 = 99 ≠ 0. Without this, the final cost might not be displayed.`
+  },
+  {
+    id:46, topic:'code',
+    q:"The `OneHotEncoder(sparse_output=False)` parameter in sklearn is used because:",
+    opts:[
+      "To reduce memory usage by using sparse matrices",
+      "To return a dense NumPy array instead of a sparse matrix (needed for NumPy operations)",
+      "To encode only sparse features",
+      "To apply L1 regularization during encoding"
+    ],
+    ans:1,
+    exp:`By default, <code>OneHotEncoder</code> returns a <em>sparse matrix</em> (efficient for many zeros). The tutorial sets <code>sparse_output=False</code> (renamed from <code>sparse=False</code> in newer sklearn) to get a <strong>dense NumPy array</strong>. This is necessary because subsequent NumPy operations like <code>np.dot</code> and slicing work correctly on dense arrays.`
+  },
+  {
+    id:47, topic:'code',
+    q:"In `predict_softmax`, after computing `y_pred = softmax(z)`, the final step `predicted_classes = np.argmax(y_pred, axis=1)` does what?",
+    opts:[
+      "Returns the maximum probability value",
+      "Returns the class index with the highest probability for each sample",
+      "Sorts all probabilities in descending order",
+      "Converts probabilities to one-hot vectors"
+    ],
+    ans:1,
+    exp:`<code>np.argmax(y_pred, axis=1)</code>: <span class="formula">y_pred shape: (n, C) → argmax over axis=1 → shape (n,)</span>For each sample (row), it returns the <strong>index of the maximum softmax probability</strong> — i.e., the predicted class. This implements the decision rule: yₚᵣₑd = argmaxᵢ P(Y=i|x,W,b).`
+  },
+
+  // ─── Limitations (Q48–Q50) ───
+  {
+    id:48, topic:'limit',
+    q:"Logistic Regression (including Softmax Regression) is limited to:",
+    opts:[
+      "Datasets with more than 1000 samples only",
+      "Linearly separable data — it can only learn linear decision boundaries",
+      "Binary classification tasks only",
+      "Continuous output variables"
+    ],
+    ans:1,
+    exp:`The fundamental limitation is that logistic/softmax regression assumes <strong>linear separability</strong> — the decision boundary is always a hyperplane: <span class="formula">w · x + b = 0</span>Real-world data is often non-linearly distributed (e.g., XOR problem). Neural networks overcome this by stacking non-linear layers.`
+  },
+  {
+    id:49, topic:'limit',
+    q:"A dataset is linearly separable if:",
+    opts:[
+      "All features have the same scale",
+      "There exists a hyperplane w·x + b = 0 such that all class 1 points have w·xᵢ+b > 0 and all class 2 points have w·xᵢ+b < 0",
+      "The number of features equals the number of classes",
+      "The training accuracy is 100%"
+    ],
+    ans:1,
+    exp:`Linear separability means a hyperplane perfectly divides the two classes: <span class="formula">∀xᵢ ∈ c₁: w·xᵢ + b > 0</span><span class="formula">∀xᵢ ∈ c₂: w·xᵢ + b < 0</span>In 2D this is a line; in 3D a plane; in higher dims a hyperplane. If data is NOT linearly separable (e.g., concentric circles), logistic regression will misclassify regardless of training.`
+  },
+  {
+    id:50, topic:'limit',
+    q:"Which of the following best explains why Neural Networks overcome the linear separability limitation of logistic regression?",
+    opts:[
+      "Neural networks use larger datasets",
+      "Neural networks stack multiple non-linear transformations (layers with activation functions) to learn complex, non-linear decision boundaries",
+      "Neural networks use a different loss function",
+      "Neural networks do not use gradient descent"
+    ],
+    ans:1,
+    exp:`Logistic/Softmax regression is a <em>single-layer</em> model producing a linear boundary. Neural networks overcome this by: <strong>(1)</strong> stacking multiple layers, <strong>(2)</strong> applying non-linear activations (ReLU, sigmoid) between layers. Each layer transforms the feature space, and multiple non-linear transformations can represent arbitrarily complex decision boundaries. This is the main motivation for deep learning.`
+  }
+];
+
+// ─────────────────────────────────────────────
+// State
+// ─────────────────────────────────────────────
+let userAnswers = {};
+let revealed = {};
+let currentFilter = 'all';
+
+function renderAll() {
+  const main = document.getElementById('quizMain');
+  main.innerHTML = '';
+  let visible = 0;
+
+  questions.forEach((q, idx) => {
+    if (currentFilter !== 'all' && q.topic !== currentFilter) return;
+    visible++;
+    const answered = userAnswers[q.id] !== undefined;
+    const isCorrect = answered && userAnswers[q.id] === q.ans;
+    const isWrong = answered && userAnswers[q.id] !== q.ans;
+    const isRevealed = revealed[q.id];
+
+    let cardClass = 'q-card';
+    if (isCorrect) cardClass += ' answered-correct';
+    if (isWrong) cardClass += ' answered-wrong';
+
+    const topicLabel = {
+      erm:'ERM', softmax:'SOFTMAX', gd:'GRADIENT', eval:'EVAL', code:'CODE', limit:'LIMIT'
+    }[q.topic];
+
+    let badgeHTML = '';
+    if (answered || isRevealed) {
+      if (isCorrect || (isRevealed && !answered)) {
+        badgeHTML = `<span class="result-badge badge-correct">✓ ${isCorrect ? 'Correct' : 'Answer'}</span>`;
+      } else if (isWrong) {
+        badgeHTML = `<span class="result-badge badge-wrong">✗ Wrong</span>`;
+      }
+    }
+
+    const optionsHTML = q.opts.map((opt, oi) => {
+      let cls = 'option';
+      const keys = ['A','B','C','D'];
+      if (answered || isRevealed) {
+        cls += ' disabled';
+        if (oi === q.ans) cls += ' correct-answer';
+        else if (answered && oi === userAnswers[q.id]) cls += ' wrong-answer';
+      } else {
+        if (userAnswers[q.id] === oi) cls += ' selected';
+      }
+      return `<button class="${cls}" onclick="selectAnswer(${q.id}, ${oi})">
+        <span class="option-key">${keys[oi]}</span>
+        <span class="option-text">${opt}</span>
+      </button>`;
+    }).join('');
+
+    const expClass = (answered || isRevealed) ? 'explanation show' + (isWrong ? ' wrong-exp' : '') : 'explanation';
+    const expLabel = isCorrect ? '✓ Explanation' : isWrong ? '✗ Explanation — Correct Answer Below' : 'Explanation';
+
+    main.innerHTML += `
+      <div class="${cardClass}" id="card-${q.id}" data-topic="${q.topic}">
+        <div class="q-header">
+          <span class="q-num topic-${q.topic}">Q${q.id} · ${topicLabel}</span>
+          <span class="q-text">${q.q}</span>
+          ${badgeHTML}
+        </div>
+        <div class="options">${optionsHTML}</div>
+        <div class="${expClass}" id="exp-${q.id}">
+          <div class="exp-label">${expLabel}</div>
+          <div class="exp-text">${q.exp}</div>
+        </div>
+      </div>`;
+  });
+  document.getElementById('visibleCount').textContent = `${visible} visible`;
+  updateScore();
+}
+
+function selectAnswer(qId, optIdx) {
+  if (userAnswers[qId] !== undefined || revealed[qId]) return;
+  userAnswers[qId] = optIdx;
+  renderAll();
+}
+
+function updateScore() {
+  const total = questions.length;
+  const correct = Object.keys(userAnswers).filter(id => userAnswers[id] === questions.find(q=>q.id===parseInt(id)).ans).length;
+  const wrong = Object.keys(userAnswers).length - correct;
+  const unanswered = total - Object.keys(userAnswers).length - Object.keys(revealed).filter(id=>!userAnswers[id]).length;
+
+  const answered = Object.keys(userAnswers).length + Object.keys(revealed).filter(id=>!userAnswers[id]).length;
+  const pct = Math.round(Object.keys(userAnswers).length > 0 ? (correct / Object.keys(userAnswers).length) * 100 : 0);
+
+  document.getElementById('scoreDisplay').textContent = Object.keys(userAnswers).length > 0 ? pct + '%' : '—';
+  document.getElementById('correctCount').textContent = correct;
+  document.getElementById('wrongCount').textContent = wrong;
+  document.getElementById('unansweredCount').textContent = total - Object.keys(userAnswers).length;
+  document.getElementById('progressFill').style.width = (answered / total * 100) + '%';
+}
+
+function revealAll() {
+  questions.forEach(q => { if (userAnswers[q.id] === undefined) revealed[q.id] = true; });
+  renderAll();
+}
+
+function resetAll() {
+  userAnswers = {};
+  revealed = {};
+  renderAll();
+}
+
+function showOnlyWrong() {
+  const wrongIds = Object.keys(userAnswers).filter(id => userAnswers[id] !== questions.find(q=>q.id===parseInt(id)).ans);
+  if (wrongIds.length === 0) { alert('No wrong answers yet!'); return; }
+  currentFilter = 'all';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const cards = document.querySelectorAll('.q-card');
+  cards.forEach(c => {
+    const id = parseInt(c.id.replace('card-',''));
+    c.style.display = wrongIds.includes(String(id)) ? '' : 'none';
+  });
+  document.getElementById('visibleCount').textContent = `${wrongIds.length} wrong answers`;
+}
+
+function filterTopic(topic, btn) {
+  currentFilter = topic;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+
+// Init
+renderAll();
+</script>
+</body>
+</html>

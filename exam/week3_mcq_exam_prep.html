@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6CS012 — Week 3 MCQ Exam Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3a;
+    --border2: #3a3a52;
+    --text: #e8e8f0;
+    --text2: #8888aa;
+    --text3: #5555770;
+    --accent: #7b5ea7;
+    --accent2: #a06cd5;
+    --accent-glow: rgba(123,94,167,0.25);
+    --green: #3ddc84;
+    --green-bg: rgba(61,220,132,0.08);
+    --green-border: rgba(61,220,132,0.3);
+    --red: #ff6b6b;
+    --red-bg: rgba(255,107,107,0.08);
+    --red-border: rgba(255,107,107,0.3);
+    --amber: #f0a500;
+    --amber-bg: rgba(240,165,0,0.08);
+    --blue: #5b9cf6;
+    --blue-bg: rgba(91,156,246,0.08);
+    --blue-border: rgba(91,156,246,0.3);
+    --teal: #2dd4bf;
+    --teal-bg: rgba(45,212,191,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grain + grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(123,94,167,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 90% 80%, rgba(91,156,246,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .noise {
+    position: fixed;
+    inset: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    padding: 2rem 1.5rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background: rgba(10,10,15,0.6);
+    backdrop-filter: blur(12px);
+  }
+
+  .sidebar-logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 13px;
+    color: var(--text2);
+    letter-spacing: 0.05em;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-logo span {
+    display: block;
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 4px;
+    line-height: 1.2;
+  }
+
+  .score-ring {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+
+  .ring-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+  }
+
+  .ring-svg { transform: rotate(-90deg); }
+
+  .ring-bg { fill: none; stroke: var(--border2); stroke-width: 8; }
+  .ring-fill {
+    fill: none;
+    stroke: var(--accent2);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 251;
+    stroke-dashoffset: 251;
+    transition: stroke-dashoffset 0.6s cubic-bezier(0.4,0,0.2,1);
+    filter: drop-shadow(0 0 6px var(--accent));
+  }
+
+  .ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ring-pct { font-size: 22px; font-weight: 700; color: var(--text); }
+  .ring-label { font-size: 10px; color: var(--text2); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .score-item {
+    text-align: center;
+    padding: 8px;
+    border-radius: 8px;
+    background: var(--surface2);
+  }
+
+  .score-item .num { font-size: 20px; font-weight: 700; }
+  .score-item .lbl { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .score-item.done .num { color: var(--text); }
+  .score-item.correct .num { color: var(--green); }
+  .score-item.wrong .num { color: var(--red); }
+  .score-item.total .num { color: var(--accent2); }
+
+  .progress-wrap {
+    width: 100%;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text2);
+    margin-bottom: 6px;
+  }
+
+  .progress-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 4px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  .filter-section { display: flex; flex-direction: column; gap: 6px; }
+
+  .filter-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text2);
+    margin-bottom: 4px;
+  }
+
+  .filter-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    transition: all 0.2s;
+    text-align: left;
+  }
+
+  .filter-btn:hover { background: var(--surface); color: var(--text); }
+
+  .filter-btn.active {
+    background: var(--surface2);
+    border-color: var(--accent);
+    color: var(--text);
+    box-shadow: inset 0 0 0 1px rgba(123,94,167,0.2), 0 0 12px rgba(123,94,167,0.1);
+  }
+
+  .filter-count {
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    background: var(--border);
+    color: var(--text2);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .filter-btn.active .filter-count {
+    background: var(--accent);
+    color: white;
+  }
+
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; display: inline-block; flex-shrink: 0;
+  }
+
+  .topic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .topic-item {
+    font-size: 11px;
+    color: var(--text2);
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .topic-item:hover { background: var(--surface); color: var(--text); }
+
+  .topic-item.active { background: var(--surface2); color: var(--accent2); }
+
+  .sidebar-footer {
+    font-size: 11px;
+    color: var(--text2);
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    padding: 2rem 2.5rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .main-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .main-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 32px;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .main-subtitle {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 4px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .mode-toggle {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mode-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .mode-btn:hover { background: var(--surface2); color: var(--text); }
+  .mode-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+  /* ── QUESTION CARD ── */
+  .q-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    animation: slideIn 0.25s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+  }
+
+  .q-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .q-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text2);
+    background: var(--surface2);
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+  }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .badge-easy { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .badge-medium { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(240,165,0,0.3); }
+  .badge-hard { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .badge-numerical { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+
+  .q-topic {
+    font-size: 11px;
+    color: var(--text2);
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .q-text {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    line-height: 1.55;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .opt-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border2);
+    background: var(--surface2);
+    color: var(--text);
+    cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: left;
+    transition: all 0.18s;
+    width: 100%;
+  }
+
+  .opt-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(123,94,167,0.08);
+    transform: translateX(3px);
+  }
+
+  .opt-letter {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+    transition: all 0.18s;
+  }
+
+  .opt-btn:hover:not(:disabled) .opt-letter {
+    background: var(--accent);
+    color: white;
+  }
+
+  .opt-btn:disabled { cursor: default; }
+
+  .opt-btn.correct {
+    border-color: var(--green);
+    background: var(--green-bg);
+    animation: correctPulse 0.4s ease;
+  }
+
+  .opt-btn.correct .opt-letter {
+    background: var(--green);
+    color: #0a0a0f;
+  }
+
+  .opt-btn.wrong {
+    border-color: var(--red);
+    background: var(--red-bg);
+    animation: wrongShake 0.35s ease;
+  }
+
+  .opt-btn.wrong .opt-letter {
+    background: var(--red);
+    color: white;
+  }
+
+  .opt-btn.reveal-correct {
+    border-color: var(--green);
+    background: var(--green-bg);
+  }
+
+  .opt-btn.reveal-correct .opt-letter {
+    background: var(--green);
+    color: #0a0a0f;
+  }
+
+  @keyframes correctPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.01); box-shadow: 0 0 20px rgba(61,220,132,0.2); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes wrongShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* Explanation */
+  .explanation {
+    margin-top: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    background: rgba(123,94,167,0.06);
+    border: 1px solid rgba(123,94,167,0.2);
+    border-left: 3px solid var(--accent2);
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.75;
+    display: none;
+    animation: fadeInUp 0.3s ease;
+  }
+
+  .explanation.show { display: block; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .explanation-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent2);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+    font-family: 'Syne', sans-serif;
+  }
+
+  /* Navigation */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  .nav-group { display: flex; gap: 8px; }
+
+  .nav-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-btn:hover:not(:disabled) {
+    background: var(--surface2);
+    border-color: var(--accent);
+    color: var(--accent2);
+  }
+
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+  .nav-center {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .nav-center .q-pos { color: var(--text); font-weight: 500; }
+
+  /* Question grid overview */
+  .q-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+    gap: 6px;
+  }
+
+  .q-dot {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text2);
+    transition: all 0.15s;
+  }
+
+  .q-dot:hover { border-color: var(--accent); color: var(--text); }
+  .q-dot.current { border-color: var(--accent); background: rgba(123,94,167,0.15); color: var(--accent2); }
+  .q-dot.answered-correct { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
+  .q-dot.answered-wrong { background: var(--red-bg); border-color: var(--red-border); color: var(--red); }
+
+  .overview-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 14px;
+    color: var(--text);
+    z-index: 1000;
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    backdrop-filter: blur(12px);
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: var(--green); color: var(--green); }
+  .toast.error { border-color: var(--red); color: var(--red); }
+
+  /* Keyboard hint */
+  .kbd-hint {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    color: var(--text2);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .key {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: 10px;
+    color: var(--text);
+  }
+
+  /* Result overlay */
+  .result-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,15,0.9);
+    backdrop-filter: blur(16px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .result-overlay.show { display: flex; }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 24px;
+    padding: 3rem;
+    text-align: center;
+    max-width: 480px;
+    width: 90%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(123,94,167,0.3) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .result-emoji { font-size: 56px; margin-bottom: 1rem; display: block; }
+  .result-title { font-family: 'Instrument Serif', serif; font-size: 28px; font-style: italic; margin-bottom: 0.5rem; }
+  .result-score { font-size: 56px; font-weight: 700; color: var(--accent2); line-height: 1; margin: 1rem 0; }
+  .result-score span { font-size: 24px; color: var(--text2); font-weight: 400; }
+  .result-msg { color: var(--text2); margin-bottom: 1.5rem; font-size: 15px; }
+
+  .result-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+
+  .result-stat { background: var(--surface2); border-radius: 12px; padding: 12px; }
+  .result-stat .n { font-size: 24px; font-weight: 700; }
+  .result-stat .l { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
+  .result-stat.c .n { color: var(--green); }
+  .result-stat.w .n { color: var(--red); }
+  .result-stat.s .n { color: var(--accent2); }
+
+  .result-btn {
+    padding: 12px 32px;
+    border-radius: 12px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 0 20px rgba(123,94,167,0.3);
+  }
+
+  .result-btn:hover { background: var(--accent2); transform: scale(1.02); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; }
+    .main { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      6CS012 · AI & Machine Learning
+      <span>Week 3 Exam Prep</span>
+    </div>
+
+    <div class="score-ring">
+      <div class="ring-container">
+        <svg class="ring-svg" width="100" height="100" viewBox="0 0 100 100">
+          <circle class="ring-bg" cx="50" cy="50" r="40"/>
+          <circle class="ring-fill" id="ring" cx="50" cy="50" r="40"/>
+        </svg>
+        <div class="ring-center">
+          <span class="ring-pct" id="pct">0%</span>
+          <span class="ring-label">Score</span>
+        </div>
+      </div>
+      <div class="score-grid">
+        <div class="score-item total"><div class="num">50</div><div class="lbl">Total</div></div>
+        <div class="score-item done"><div class="num" id="s-done">0</div><div class="lbl">Done</div></div>
+        <div class="score-item correct"><div class="num" id="s-correct">0</div><div class="lbl">Correct</div></div>
+        <div class="score-item wrong"><div class="num" id="s-wrong">0</div><div class="lbl">Wrong</div></div>
+      </div>
+      <div class="progress-wrap" style="width:100%">
+        <div class="progress-label"><span>Progress</span><span id="prog-pct">0 / 50</span></div>
+        <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">Filter by Difficulty</div>
+      <button class="filter-btn active" onclick="setFilter('all',this)">
+        <span>All Questions</span><span class="filter-count">50</span>
+      </button>
+      <button class="filter-btn" onclick="setFilter('easy',this)">
+        <span><span class="dot" style="background:var(--green)"></span>Easy</span>
+        <span class="filter-count" id="cnt-easy">0</span>
+      </button>
+      <button class="filter-btn" onclick="setFilter('medium',this)">
+        <span><span class="dot" style="background:var(--amber)"></span>Medium</span>
+        <span class="filter-count" id="cnt-medium">0</span>
+      </button>
+      <button class="filter-btn" onclick="setFilter('hard',this)">
+        <span><span class="dot" style="background:var(--red)"></span>Hard</span>
+        <span class="filter-count" id="cnt-hard">0</span>
+      </button>
+      <button class="filter-btn" onclick="setFilter('numerical',this)">
+        <span><span class="dot" style="background:var(--blue)"></span>Numerical</span>
+        <span class="filter-count" id="cnt-numerical">0</span>
+      </button>
+    </div>
+
+    <div class="filter-section" style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
+      <div class="filter-title">Question Overview</div>
+      <div class="q-grid" id="q-overview"></div>
+    </div>
+
+    <div class="sidebar-footer">
+      "Understanding is the first step to mastery."
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="main-header">
+      <div>
+        <div class="main-title">Neural Networks & Perceptrons</div>
+        <div class="main-subtitle">// MCP Neurons · Perceptron Learning · XOR Problem · Deep Learning</div>
+      </div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="btn-mode-quiz" onclick="setMode('quiz',this)">Quiz</button>
+        <button class="mode-btn" id="btn-mode-study" onclick="setMode('study',this)">Study</button>
+      </div>
+    </div>
+
+    <div class="q-wrapper" id="q-wrapper">
+      <div class="q-card" id="q-card">
+        <!-- rendered by JS -->
+      </div>
+
+      <div class="nav-bar">
+        <div class="nav-group">
+          <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">
+            ← Prev
+          </button>
+        </div>
+        <div class="nav-center">
+          <span class="q-pos" id="nav-pos">Q 1 of 50</span>
+          <div class="kbd-hint">
+            <span class="kbd"><span class="key">A–D</span> select</span>
+            <span class="kbd"><span class="key">←</span><span class="key">→</span> navigate</span>
+          </div>
+        </div>
+        <div class="nav-group">
+          <button class="nav-btn" id="btn-next" onclick="navigate(1)">
+            Next →
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Result overlay -->
+<div class="result-overlay" id="result-overlay">
+  <div class="result-card">
+    <span class="result-emoji" id="result-emoji">🎉</span>
+    <div class="result-title" id="result-title">Exam Complete!</div>
+    <div class="result-score" id="result-score">0<span>/50</span></div>
+    <div class="result-msg" id="result-msg">Keep practising!</div>
+    <div class="result-stats">
+      <div class="result-stat c"><div class="n" id="r-correct">0</div><div class="l">Correct</div></div>
+      <div class="result-stat w"><div class="n" id="r-wrong">0</div><div class="l">Wrong</div></div>
+      <div class="result-stat s"><div class="n" id="r-skip">0</div><div class="l">Skipped</div></div>
+    </div>
+    <button class="result-btn" onclick="restartAll()">Restart Quiz</button>
+  </div>
+</div>
+
+<script>
+const QS = [
+  {t:"MCP Neuron Basics",d:"easy",q:"Who proposed the McCulloch-Pitts (MCP) neuron model and in what year?",o:["Rosenblatt in 1958","McCulloch & Pitts in 1943","Minsky & Papert in 1969","Alexander Bain in 1873"],a:1,e:"The MCP neuron was proposed by Warren McCulloch (neuroscientist) and Walter Pitts (logician) in 1943 in their landmark paper 'Logical Calculus of Ideas Immanent in Nervous Activity'. It was the FIRST ever computational model of a biological neuron."},
+  {t:"MCP Neuron Basics",d:"easy",q:"The MCP neuron describes the activity of a single neuron with how many possible output states?",o:["One state (always firing)","Two states: firing (1) or not firing (0)","Three states: firing, resting, inhibited","Continuous output between 0 and 1"],a:1,e:"MCP has exactly two states: firing (output=1) when the threshold is exceeded, and not firing (output=0) otherwise. This binary nature mirrors the all-or-nothing principle of biological neurons and directly inspired the step function in the Perceptron."},
+  {t:"MCP Neuron Basics",d:"medium",q:"In the MCP neuron model, what happens when ANY inhibitory input is active?",o:["The neuron fires with reduced strength","The neuron fires only if excitatory inputs exceed threshold","The neuron does NOT fire, regardless of all other inputs","The threshold is automatically doubled"],a:2,e:"A critical rule: if ANY inhibitory synapse is active, the neuron output = 0, REGARDLESS of excitatory inputs. This is absolute — inhibition completely blocks firing. Mathematically: y = 0 if any xi is inhibitory, else apply threshold logic."},
+  {t:"MCP Neuron Basics",d:"medium",q:"In the MCP model, the aggregation function g(X) is defined as:",o:["Product of all inputs","Maximum of all inputs","Simple sum of all binary inputs: g(X) = Σxi","Weighted sum of inputs: g(X) = Σwixi"],a:2,e:"In MCP, g(X) = Σxi — a simple unweighted sum of binary inputs. There are NO learnable weights; all inputs are treated equally. This is a fundamental limitation: MCP cannot express which inputs matter more. The Perceptron solved this by introducing learnable weights."},
+  {t:"MCP Limitations",d:"medium",q:"Which of the following is NOT a limitation of the MCP neuron?",o:["It cannot process continuous real-valued inputs","It lacks any learning procedure","It cannot represent ANY boolean functions","It represents only a single neuron with no complex connectivity"],a:2,e:"MCP CAN represent linearly separable boolean functions (AND, OR, NOT etc.). The real limitations are: (1) binary inputs only, (2) no learning — threshold T must be set manually, (3) no weights — no measure of importance, (4) single neuron only — no network structure."},
+  {t:"MCP Limitations",d:"hard",q:"Linear separability for boolean functions means:",o:["All inputs produce identical outputs","A hyperplane exists separating inputs that produce 1 from inputs that produce 0","The weights of the network always sum to zero","The network converges after exactly one epoch"],a:1,e:"Linear separability: there exists a line (in 2D) or hyperplane (in higher dimensions) such that ALL inputs producing output=1 lie on one side, and ALL inputs producing output=0 lie on the other side. MCP (and single-layer Perceptron) can ONLY solve linearly separable problems."},
+  {t:"Perceptron Basics",d:"easy",q:"The Perceptron was proposed by whom and in what year?",o:["Warren McCulloch in 1943","Walter Pitts in 1943","Frank Rosenblatt in 1958","Minsky and Papert in 1969"],a:2,e:"Frank Rosenblatt (psychologist/logician) proposed the Perceptron in 1958. It improved on MCP by introducing: (1) learnable numerical weights wi, (2) a learnable bias w0 (replacing fixed threshold T), and (3) a weight update learning procedure. The New York Times called it 'the embryo of an electronic computer'."},
+  {t:"Perceptron Basics",d:"easy",q:"The primary improvement the Perceptron made over the MCP neuron was:",o:["Using only boolean (0/1) inputs","Introducing learnable weights and a weight-update learning algorithm","Removing the need for a threshold function","Allowing inhibitory inputs"],a:1,e:"The Perceptron's key advances over MCP: (1) Learnable weights wi — each input has its own importance. (2) Learnable bias w0 — adjusts decision boundary automatically. (3) A learning algorithm — weights update based on prediction errors. MCP had none of these; its threshold was manually set."},
+  {t:"Perceptron Math",d:"medium",q:"The net weighted input (z) in a perceptron is computed as:",o:["z = Σ(wi + xi) + w0","z = Σ(wi × xi) + w0","z = Σ(wi / xi) - w0","z = max(wi × xi) + w0"],a:1,e:"z = Σ(wi × xi) + w0, where: wi = learned weights, xi = input features, w0 = bias (also learned). This is the weighted sum plus bias. The bias w0 allows the decision boundary to shift away from the origin — without it, all boundaries must pass through the origin."},
+  {t:"Perceptron Math",d:"medium",q:"The step (threshold) activation function of the perceptron outputs:",o:["1 if z > 0, else 0","1 if z ≥ 0, else 0","1 if z ≥ 0.5, else 0","σ(z) = 1/(1+e^-z) for all z"],a:1,e:"f(z) = 1 if z ≥ 0, else 0. Important: z = 0 gives output 1 (≥ not >). For OR training example: if z = 0.0 (exactly), the output is 1. This step function is non-differentiable — a limitation that led to the sigmoid function for deeper networks."},
+  {t:"Perceptron Learning",d:"medium",q:"The perceptron weight update rule for weights wi when misclassified is:",o:["wi = wi - η(y - ŷ)xi","wi = wi + η(y - ŷ)xi","wi = wi × η(y - ŷ)xi","wi = wi + η(y + ŷ)xi"],a:1,e:"Update rule: wi = wi + η(y - ŷ)xi. Here: η = learning rate, y = true label, ŷ = predicted label, xi = input. This is only applied when y ≠ ŷ (misclassification). The error term (y - ŷ) can be +1, -1, or 0. Only when it's nonzero do weights change."},
+  {t:"Perceptron Learning",d:"medium",q:"The bias update rule in the perceptron learning algorithm is:",o:["w0 = w0 + η(y - ŷ)x0","w0 = w0 + η(y - ŷ)","w0 = w0 × η(y - ŷ)","w0 = w0 - η × ŷ"],a:1,e:"Bias update: w0 = w0 + η(y - ŷ). Unlike weight updates, there is NO multiplication by xi because bias is not associated with any input feature. It is a standalone parameter that shifts the entire decision boundary. In code, this is elegantly handled by including a phantom input x0 = 1."},
+  {t:"Perceptron Learning",d:"hard",q:"The perceptron learning algorithm stops (converges) when:",o:["After exactly 10 epochs","All weights are positive","No weight updates occur in a complete pass through all training samples","The learning rate η reaches 0"],a:2,e:"The algorithm uses a ConvergenceFlag. At start of each epoch: set flag = True. For each sample, if misclassified → update weights → set flag = False. After all samples: if flag is still True (no updates happened) → BREAK. This means the network correctly classified every single training sample."},
+  {t:"Perceptron Learning",d:"easy",q:"What role does the learning rate η play in the perceptron?",o:["Controls number of training epochs","Controls the magnitude of weight adjustments at each update step","Determines the network threshold value","Sets the number of hidden neurons"],a:1,e:"η (eta) is a small positive value (e.g., 0.01 or 0.1) controlling HOW MUCH weights change per update. Small η: slow but stable convergence. Large η: fast but may oscillate. The tutorial uses η = 0.1. It multiplies the error term: Δwi = η(y - ŷ)xi."},
+  {t:"Numerical",d:"numerical",q:"Given: w1=0.2, w2=-0.1, w0=0.1 (bias), η=0.1. Training sample: (x1=0, x2=0), expected y=0. What is the computed z?",o:["z = 0.0","z = 0.1","z = -0.1","z = 0.3"],a:1,e:"STEP-BY-STEP CALCULATION:\nz = w1×x1 + w2×x2 + w0\nz = (0.2 × 0) + (-0.1 × 0) + 0.1\nz = 0 + 0 + 0.1\nz = 0.1\n\nSince z = 0.1 ≥ 0, apply step function: ŷ = 1\nBut expected y = 0, so ŷ ≠ y → MISCLASSIFIED → update weights."},
+  {t:"Numerical",d:"numerical",q:"Continuing Q15: w1=0.2, w2=-0.1, w0=0.1, η=0.1, sample (0,0), y=0, ŷ=1. What is the updated w0?",o:["w0 = 0.1","w0 = 0.2","w0 = 0.0","w0 = -0.1"],a:2,e:"STEP-BY-STEP:\nError = y - ŷ = 0 - 1 = -1\n\nUpdate w0: w0 = w0 + η(y - ŷ) = 0.1 + 0.1×(-1) = 0.1 - 0.1 = 0.0\n\nUpdate w1: w1 = 0.2 + 0.1×(-1)×(x1=0) = 0.2 + 0 = 0.2 (no change, x1=0)\nUpdate w2: w2 = -0.1 + 0.1×(-1)×(x2=0) = -0.1 + 0 = -0.1 (no change, x2=0)"},
+  {t:"Numerical",d:"numerical",q:"After the (0,0) update: w1=0.2, w2=-0.1, w0=0.0. Sample (0,1), expected y=1. Compute z and ŷ.",o:["z=0.1, ŷ=1 (correct)","z=-0.1, ŷ=0 (misclassified)","z=0.0, ŷ=1 (correct)","z=0.2, ŷ=1 (correct)"],a:1,e:"STEP-BY-STEP:\nz = w1×x1 + w2×x2 + w0\nz = (0.2 × 0) + (-0.1 × 1) + 0.0\nz = 0 + (-0.1) + 0 = -0.1\n\nSince z = -0.1 < 0: ŷ = 0\nExpected y = 1 (OR function: at least one input is 1)\nŷ ≠ y → MISCLASSIFIED → update weights again."},
+  {t:"Numerical",d:"numerical",q:"From Q17: w1=0.2, w2=-0.1, w0=0.0, sample (0,1), y=1, ŷ=0. After update, what is w2?",o:["w2 = -0.1","w2 = 0.0","w2 = 0.1","w2 = -0.2"],a:1,e:"STEP-BY-STEP:\nError = y - ŷ = 1 - 0 = +1\n\nUpdate w2: w2 = -0.1 + η(y-ŷ)×x2 = -0.1 + 0.1×(1)×1 = -0.1 + 0.1 = 0.0\nUpdate w1: w1 = 0.2 + 0.1×(1)×(x1=0) = 0.2 + 0 = 0.2 (no change)\nUpdate w0: w0 = 0.0 + 0.1×(1) = 0.1\n\nNew weights: w1=0.2, w2=0.0, w0=0.1"},
+  {t:"Numerical",d:"numerical",q:"Epoch 1, sample 3: (1,0)→y=1. Using w1=0.2, w2=0.0, w0=0.1. Compute z and determine if update needed.",o:["z=0.3, ŷ=1, no update needed","z=-0.3, ŷ=0, update needed","z=0.0, ŷ=1, no update","z=0.2, ŷ=1, update needed"],a:0,e:"STEP-BY-STEP:\nz = w1×x1 + w2×x2 + w0\nz = (0.2×1) + (0.0×0) + 0.1\nz = 0.2 + 0 + 0.1 = 0.3\n\nSince z=0.3 ≥ 0: ŷ = 1\nExpected y = 1 (OR(1,0) = 1)\nŷ = y → CORRECTLY CLASSIFIED → no weight update. Confirmed by tutorial."},
+  {t:"Numerical",d:"numerical",q:"Epoch 2 begins with w1=0.2, w2=0.0, w0=0.0. For input (0,1)→y=1, what happens?",o:["z=0.0, ŷ=1, no update","z=0.0, ŷ=1, update because OR(0,1)=0","z=-0.1, ŷ=0, update needed","z=0.2, ŷ=1, no update"],a:0,e:"STEP-BY-STEP:\nz = (0.2×0) + (0.0×1) + 0.0 = 0.0\nSince z = 0.0 ≥ 0: ŷ = 1\nExpected y = 1 (OR(0,1) = 1)\nŷ = y → correctly classified → NO update.\n\nTutorial confirms: Epoch 2 shows 'No' update for this sample. All 3 remaining samples are also correctly classified → algorithm converges!"},
+  {t:"XOR Problem",d:"easy",q:"What is the output of XOR(1,1)?",o:["0","1","Undefined","Depends on weights"],a:0,e:"XOR (exclusive OR) truth table: (0,0)→0, (0,1)→1, (1,0)→1, (1,1)→0. XOR outputs 1 when EXACTLY ONE input is 1 — not both. XOR(1,1) = 0. This case (both inputs=1 → output=0) combined with (1,0)→1 and (0,1)→1 creates the non-linear separability problem."},
+  {t:"XOR Problem",d:"medium",q:"Why cannot a single-layer perceptron solve the XOR problem?",o:["The learning rate must be tuned perfectly","XOR is not linearly separable — no single hyperplane can correctly separate all four XOR outputs","The perceptron has too many weights","The step function cannot handle XOR logic"],a:1,e:"XOR is NOT linearly separable. On a 2D grid: (0,1) and (1,0) output 1, while (0,0) and (1,1) output 0. These four points are arranged such that NO single straight line can separate the 1s from the 0s. A single perceptron only creates linear boundaries, making XOR fundamentally unsolvable."},
+  {t:"XOR Problem",d:"hard",q:"The mathematical proof that XOR is unsolvable by a single perceptron shows that:",o:["The learning rate must be negative","The four constraints from XOR (w0<0, w2>-w0, w1>-w0, w1+w2<-w0) are mutually contradictory","The bias term must be zero","The weights diverge to infinity"],a:1,e:"From the 4 XOR cases:\n(0,0)→0: w0 < 0\n(0,1)→1: w2 > -w0\n(1,0)→1: w1 > -w0\n(1,1)→0: w1+w2 < -w0\n\nFrom cases 2&3: w1+w2 > -2w0. Since w0<0, -w0>0, so -2w0 > -w0. This means w1+w2 > -w0. But case 4 requires w1+w2 < -w0. DIRECT CONTRADICTION — no solution exists."},
+  {t:"XOR Problem",d:"medium",q:"During XOR training with a perceptron (w0=0.1, w1=0.2, w2=-0.1), for input (1,1)→y=0, what is z?",o:["z = -0.1","z = 0.2","z = 0.3","z = 0.1"],a:1,e:"STEP-BY-STEP (from tutorial Epoch 1, Example 4 of XOR):\nz = w1×x1 + w2×x2 + w0\n\nUsing weights after earlier updates (w1=0.2, w2=0.0, w0=0.1):\nz = (0.2×1) + (0.0×1) + 0.1 = 0.2 + 0 + 0.1 = 0.3\n\nBut wait — from initial weights: z = (0.2×1)+(-0.1×1)+0.1 = 0.2-0.1+0.1 = 0.2. Either way, ŷ=1 but y=0 → misclassified."},
+  {t:"XOR Problem",d:"hard",q:"The Minsky and Papert Correction (1969) concluded:",o:["Perceptrons are perfect for all classification tasks","Individual perceptrons are weak — networks of neurons are required to solve non-linearly separable problems","XOR can be solved by increasing the number of training epochs to 1000+","Perceptrons should be completely abandoned for all AI work"],a:1,e:"Minsky & Papert's 1969 book showed single perceptrons cannot solve non-linearly separable problems like XOR. Their key conclusion: 'Individual elements are weak computational elements. Networks of elements are required.' They also noted that larger networks COULD solve XOR — pointing toward multi-layer architectures."},
+  {t:"XOR Solution",d:"medium",q:"The XOR problem is solved using:",o:["A larger single-layer perceptron with more weights","A Multilayer Perceptron (MLP) with at least one hidden layer","A different activation function in the same single neuron","Simply increasing the learning rate"],a:1,e:"XOR requires a Multilayer Perceptron (MLP) with hidden layers. The hidden neurons transform the input into a new feature space where the XOR classes BECOME linearly separable. The tutorial's MLP has: 2 input neurons → 2 hidden neurons (h1, h2) → 1 output neuron, with specific handcrafted weights."},
+  {t:"XOR Solution",d:"hard",q:"In the tutorial MLP for XOR, h1 has weights w1=1, w2=-1, bias b1=-0.5. For input (0,0), the output of h1 is:",o:["h1 = 1 (fires)","h1 = 0 (does not fire)","h1 = 0.5","h1 = -0.5"],a:1,e:"STEP-BY-STEP:\nz_h1 = w1×x1 + w2×x2 + b1\nz_h1 = (1×0) + (-1×0) + (-0.5)\nz_h1 = 0 + 0 - 0.5 = -0.5\n\nApply step function: since -0.5 < 0 → h1 output = 0\nTutorial states: 'False, thus assigned class h1o1 = 0'. Confirmed!"},
+  {t:"XOR Solution",d:"hard",q:"In the MLP for XOR, h1 has w1=1, w2=-1, b1=-0.5. For input (1,0), the output of h1 is:",o:["z=0.5, h1=1 (fires)","z=-0.5, h1=0 (does not fire)","z=1.5, h1=1","z=0.0, h1=1"],a:0,e:"STEP-BY-STEP:\nz_h1 = (1×1) + (-1×0) + (-0.5)\nz_h1 = 1 + 0 - 0.5 = 0.5\n\nApply step: since 0.5 ≥ 0 → h1 = 1 (fires!)\nThis hidden neuron effectively detects 'x1 is on, x2 is off' — contributing to computing XOR by creating one of the two linear splits needed."},
+  {t:"Neural Network History",d:"easy",q:"Alexander Bain (1873) proposed which foundational idea?",o:["Neurons should have learnable weights","The information is in the connections — the brain is a network of interconnected neurons","The sigmoid function should replace the step function","Gradient descent for weight learning"],a:1,e:"Alexander Bain in 'Mind and Body' (1873): 'The information is in the connections.' He proposed: the brain is a network of neurons, collections of neurons excite each other, memory is stored in the connections, different input combinations produce different outputs. This was the first formal idea of a neural network, predating McCulloch-Pitts by 70 years."},
+  {t:"Neural Network History",d:"medium",q:"Associationism states that:",o:["Learning requires numerical weights on connections","Learning is a mental process forming associations between temporally related phenomena","Neurons fire in a fixed sequence","Boolean logic governs all cognitive processes"],a:1,e:"Theory of Associationism (Aristotle, Plato, Hume, Pavlov): 'Learning is a mental process that forms associations between temporally related phenomena.' Example: seeing lightning → associated with hearing thunder. This ancient idea — that learning = forming connections — directly inspired the connectionist (neural network) approach to AI."},
+  {t:"Neural Network History",d:"medium",q:"Connectionist machines (like neural networks) differ from Von Neumann machines because:",o:["They use a CPU and RAM for sequential processing","The program IS the connections between many non-linear processing units working in parallel","They require handcrafted feature extraction","They cannot learn from data"],a:1,e:"Von Neumann architecture: CPU processes program + data stored in separate memory sequentially. Connectionist architecture: the 'program' IS the connection weights between many parallel non-linear processing units. Memory is also in the connections. Modern deep learning runs on Von Neumann hardware but EMULATES connectionist computation."},
+  {t:"Biological Neurons",d:"easy",q:"Which part of a biological neuron receives incoming signals from other neurons?",o:["Axon","Soma (cell body)","Dendrite","Myelin sheath"],a:2,e:"Biological neuron structure: Dendrite = receives signals from other neurons (input). Synapse = connection point between neurons. Soma = processes the aggregated signals. Axon = transmits the output signal to the next neuron. The computational analogy: Dendrites→inputs (xi), Soma→aggregation (Σ) + threshold, Axon→output."},
+  {t:"Biological Neurons",d:"easy",q:"For a biological neuron to 'fire' (generate an action potential), what condition must be met?",o:["Exactly one input must arrive","The cumulative input must exceed a certain threshold","All inhibitory inputs must be absent AND all excitatory must be present","The dendrites must merge with the axon"],a:1,e:"Biological neurons operate on a threshold principle: they fire (produce an action potential) ONLY when the combined incoming signals (from dendrites) exceed a certain threshold. Below threshold = silence. This directly inspired the step/threshold function in the MCP neuron and Perceptron. The brain has ~100 billion such neurons."},
+  {t:"Activation Functions",d:"medium",q:"Why is the step function problematic for learning in deep neural networks?",o:["It outputs values between 0 and 1, causing information loss","It is non-differentiable at z=0, making gradient-based learning (backpropagation) impossible","It requires too many floating-point operations","It only works for positive inputs"],a:1,e:"Step function problems for deep networks: (1) NON-DIFFERENTIABLE at z=0 — gradient descent requires derivatives at every point. At z=0 the derivative is undefined; everywhere else it's 0. Gradient is always 0 → weights cannot update via backpropagation. (2) Binary output loses gradient signal. These issues led directly to smooth functions like sigmoid."},
+  {t:"Activation Functions",d:"medium",q:"The sigmoid activation function σ(z) is defined as:",o:["σ(z) = z / (1 + |z|)","σ(z) = 1 / (1 + e^(-z))","σ(z) = max(0, z)","σ(z) = tanh(z) / 2"],a:1,e:"Sigmoid: σ(z) = 1/(1+e^(-z)). Key properties: (1) Maps any real input z to output in (0,1) — useful for probabilities. (2) Smooth S-shaped curve — differentiable everywhere. (3) σ(0) = 0.5. (4) As z→+∞, σ→1; as z→-∞, σ→0. (5) Derivative: σ'(z) = σ(z)(1-σ(z)) — elegant! Used in logistic regression and early neural networks."},
+  {t:"Activation Functions",d:"hard",q:"Activation functions are essential in neural networks primarily because:",o:["They speed up matrix computations","They introduce non-linearity, enabling networks to learn and approximate complex functions","They reduce overfitting by regularizing weights","They make weights converge to exactly 0 or 1"],a:1,e:"Without non-linear activation functions, a stack of linear layers is mathematically equivalent to a single linear transformation (because linear of linear = linear). Non-linearity allows the network to approximate any continuous function (Universal Approximation Theorem). Activation functions must also be differentiable for backpropagation to work."},
+  {t:"Deep Learning vs ML",d:"medium",q:"The key advantage of Deep Learning over traditional ML for image classification is:",o:["Deep learning requires far less training data","Deep learning automatically learns hierarchical features directly from raw data","Deep learning is always faster to train","Deep learning models are always smaller"],a:1,e:"Traditional ML: human experts must manually design features (edge detectors, HOG, SIFT, etc.) — slow, domain-specific, may miss important patterns. Deep Learning: automatically learns a hierarchy of features from raw pixels — low-level (edges), mid-level (textures), high-level (objects). This automatic feature learning is the revolution that made ImageNet possible."},
+  {t:"Deep Learning vs ML",d:"medium",q:"Which is a genuine limitation of traditional handcrafted feature extraction?",o:["Features are always high-quality","Features adapt automatically to new domains","It requires significant manual effort and domain expertise; features often fail to generalize","Feature extraction never causes high dimensionality"],a:2,e:"Four key limitations of manual feature extraction: (1) Manual effort & expertise — engineers must design domain-specific features. (2) Suboptimal performance — handcrafted features may miss critical information. (3) Curse of dimensionality — 784 pixels (28×28) is already high-dimensional. (4) Lack of adaptability — features for face recognition won't work for medical imaging."},
+  {t:"Perceptron Convergence",d:"hard",q:"The Perceptron Convergence Theorem guarantees convergence if and only if:",o:["The learning rate is sufficiently small (η < 0.01)","The training data is linearly separable","The number of epochs is set to at least 1000","The weights are initialized to zero"],a:1,e:"Perceptron Convergence Theorem: if training data IS linearly separable, the perceptron is GUARANTEED to find a separating hyperplane in a FINITE number of steps. If data is NOT linearly separable (like XOR), the algorithm NEVER converges — it cycles indefinitely. This is exactly what the tutorial demonstrates with XOR."},
+  {t:"MCP Boolean Operations",d:"medium",q:"For an AND gate with 2 inputs using an MCP neuron, what threshold T is required?",o:["T = 1 (fire if at least one input is 1)","T = 2 (fire only if both inputs are 1)","T = 0.5","T = 0"],a:1,e:"AND requires ALL inputs to be 1. With binary inputs:\n(0,0): sum=0, (0,1): sum=1, (1,0): sum=1, (1,1): sum=2\nWe want output=1 ONLY when sum=2, so T=2.\nCheck: (0,0)→0<2→output 0 ✓, (0,1)→1<2→0 ✓, (1,0)→1<2→0 ✓, (1,1)→2≥2→1 ✓"},
+  {t:"MCP Boolean Operations",d:"medium",q:"For an OR gate with 2 inputs using an MCP neuron, the threshold T is:",o:["T = 2","T = 1","T = 0","T = 0.5"],a:1,e:"OR fires when AT LEAST ONE input is 1. Sums: (0,0)→0, (0,1)→1, (1,0)→1, (1,1)→2. We need output=0 only when sum=0, output=1 when sum≥1. So T=1.\nVerify: (0,0)→0<1→0 ✓, (0,1)→1≥1→1 ✓, (1,0)→1≥1→1 ✓, (1,1)→2≥1→1 ✓"},
+  {t:"Perceptron Learning",d:"hard",q:"In perceptron weight updates, (y - ŷ) = +1 means:",o:["Correct prediction — no update needed","True label=1, predicted=0 — weights should be increased to make the neuron more likely to fire","True label=0, predicted=1 — weights should be decreased","The learning rate must be doubled"],a:1,e:"Interpreting error term (y - ŷ):\n+1 → y=1, ŷ=0 (missed a positive) → increase weights: wi += η×xi. More activation needed → push z up.\n-1 → y=0, ŷ=1 (false positive) → decrease weights: wi -= η×xi. Less activation needed → push z down.\n 0 → y=ŷ (correct) → no update needed.\nThis is the core logic of supervised error-driven learning."},
+  {t:"Perceptron",d:"medium",q:"The bias term w0 in the perceptron:",o:["Must be initialized to zero and kept there","Is equivalent to the learning rate η","Is a learnable parameter that shifts the decision boundary independently of inputs","Is fixed manually like the threshold T in MCP"],a:2,e:"The bias w0 is fully learnable — it updates just like other weights (w0 = w0 + η(y-ŷ)). It allows the decision boundary (w0 + Σwixi = 0) to be positioned ANYWHERE in input space, not just through the origin. Without bias, the boundary must pass through the origin — a severe restriction. In code: treated as a weight with constant input x0=1."},
+  {t:"MCP vs Perceptron",d:"hard",q:"Which statement CORRECTLY distinguishes MCP neuron from the Perceptron?",o:["MCP has learnable weights; Perceptron has fixed weights","MCP takes continuous inputs; Perceptron takes only binary inputs","MCP has fixed equal weights and no learning; Perceptron has learnable weights and a learning algorithm","MCP uses sigmoid; Perceptron uses the step function"],a:2,e:"Comparison table:\nMCP: binary inputs {0,1} only | equal fixed weights (none learned) | manually set threshold T | NO learning procedure | boolean logic\nPerceptron: real-valued inputs | learnable weights wi | learnable bias w0 (≡ -T) | learning algorithm that adjusts weights | linear binary classifier\nKey: the Perceptron LEARNS its parameters; MCP requires manual design."},
+  {t:"Numerical",d:"numerical",q:"What is σ(0) using the sigmoid function σ(z) = 1/(1+e^(-z))?",o:["σ(0) = 0","σ(0) = 1","σ(0) = 0.5","σ(0) = 0.25"],a:2,e:"STEP-BY-STEP:\nσ(z) = 1 / (1 + e^(-z))\nσ(0) = 1 / (1 + e^(-0))\nσ(0) = 1 / (1 + e^0)\nσ(0) = 1 / (1 + 1)\nσ(0) = 1/2 = 0.5\n\nThe sigmoid always outputs 0.5 at z=0. This is the 'centre' of the S-curve. For z>>0: σ→1. For z<<0: σ→0."},
+  {t:"Neural Network History",d:"hard",q:"Alan Turing's 1948 connectionist model described neural networks as having:",o:["A Von Neumann architecture with extra memory banks","Many non-linear processing units where the program IS the connections between units","Sequential linear processing with a single decision unit","Biological simulations running on physical neurons"],a:1,e:"Turing's 1948 'Intelligent Machinery' paper described connectionist (B-type) machines with: (1) Many non-linear processing units running in parallel. (2) The 'program' IS the connection weights — not stored separately as in Von Neumann. (3) Connections can also define memory. This was foundational — published just 5 years after McCulloch-Pitts."},
+  {t:"Practical Python",d:"medium",q:"In the Python Perceptron, why does `predict` use `np.insert(x, 0, 1)` before computing `np.dot(weights, x)`?",o:["To normalize the input features to [0,1]","To add a bias input x0=1 at position 0, so the bias weight w0 is automatically included in the dot product","To append a zero at the end of the input vector","To convert continuous inputs to binary"],a:1,e:"The bias weight w0 is stored at index 0 of the weights array. By inserting 1 at position 0 of x (making x = [1, x1, x2, ...]), np.dot(weights, x) automatically computes: w0×1 + w1×x1 + w2×x2 + ... = w0 + Σwixi. This elegant trick handles the bias without any special-casing in the learning loop."},
+  {t:"Practical Python",d:"medium",q:"In the Python Perceptron, weights are initialized as `np.random.rand(input_size+1) * 0.2 - 0.1`. Why `input_size + 1`?",o:["Extra weight for regularization","The +1 creates space for the bias weight w0 alongside the n input weights","To match the number of training samples","To prevent gradient explosion"],a:1,e:"The weight vector has n+1 elements: [w0, w1, w2, ..., wn]. The +1 is for the bias w0. The initialization `* 0.2 - 0.1` creates values in range [-0.1, +0.1] — small random values to break symmetry. The tutorial's manual example starts with w1=0.2, w2=-0.1, w0=0.1, which falls within this range."},
+  {t:"Deep Learning Applications",d:"easy",q:"What is common among Large Language Models, AlphaFold, text-to-image generators, and speech recognition?",o:["They all use traditional decision trees","They all use neural networks as their core computational model","They all require manual feature engineering","They all run on quantum computers"],a:1,e:"All these breakthrough applications share one common element: Neural Networks. From ChatGPT (transformer neural network) to AlphaFold (attention-based neural network for proteins) to image generators (diffusion models with neural networks) to speech recognition (recurrent/transformer networks). Neural networks ARE the common thread in modern AI breakthroughs."},
+  {t:"Numerical",d:"numerical",q:"A perceptron has w0=-1, w1=1.1, w2=1.1 (a learned OR solution). For input (1,0), what is ŷ?",o:["ŷ = 0","ŷ = 1","ŷ = 0.5","Cannot determine without learning rate"],a:1,e:"STEP-BY-STEP:\nz = w1×x1 + w2×x2 + w0\nz = (1.1 × 1) + (1.1 × 0) + (-1)\nz = 1.1 + 0 - 1 = 0.1\n\nSince z = 0.1 ≥ 0: ŷ = 1\nExpected OR(1,0) = 1 → Correct!\n\nThis weight set (w0=-1, w1=1.1, w2=1.1) is one valid solution for OR. Decision boundary: -1 + 1.1x1 + 1.1x2 = 0."},
+  {t:"XOR Problem",d:"medium",q:"What does 'the perceptron does not converge for XOR' practically mean?",o:["The weights grow to infinity","The weights oscillate indefinitely — the algorithm never finds weights that correctly classify all 4 XOR samples","The bias becomes negative","The step function stops working"],a:1,e:"For XOR, every set of weights that fixes one misclassification creates another. The weights cycle through patterns, never settling. The tutorial asks students to 'try Epoch 2' and discover that 'the perceptron does not converge and continues making mistakes.' This is because XOR is not linearly separable — the Perceptron Convergence Theorem ONLY applies to linearly separable data."},
+  {t:"Neural Network Architecture",d:"medium",q:"Why does adding hidden layers (MLP) allow solving the XOR problem?",o:["More neurons means more weights to tune","Hidden layers transform the input into a new representation where the classes become linearly separable","Hidden layers eliminate the need for activation functions","More layers always mean faster convergence"],a:1,e:"Hidden layers perform a non-linear transformation of the input space. For XOR: the original (x1,x2) space is not linearly separable. But after passing through hidden neurons h1 and h2 with specific weights, the (h1,h2) space IS linearly separable — the output neuron can then draw a straight line. This is the power of representation learning."}
+];
+
+let filtered = [...QS];
+let current = 0;
+let answered = {};
+let correctCount = 0;
+let wrongCount = 0;
+let mode = 'quiz';
+
+// Init counts
+function initCounts() {
+  document.getElementById('cnt-easy').textContent = QS.filter(q=>q.d==='easy').length;
+  document.getElementById('cnt-medium').textContent = QS.filter(q=>q.d==='medium').length;
+  document.getElementById('cnt-hard').textContent = QS.filter(q=>q.d==='hard').length;
+  document.getElementById('cnt-numerical').textContent = QS.filter(q=>q.d==='numerical').length;
+}
+
+function setFilter(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filtered = type==='all' ? [...QS] : QS.filter(q=>q.d===type);
+  current = 0;
+  renderQ();
+}
+
+function setMode(m, btn) {
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  mode = m;
+  renderQ();
+}
+
+function renderQ() {
+  if (!filtered.length) {
+    document.getElementById('q-card').innerHTML = '<p style="color:var(--text2);padding:1rem 0">No questions in this category.</p>';
+    return;
+  }
+  const q = filtered[current];
+  const gi = QS.indexOf(q);
+  const ans = answered[gi];
+  const isAnswered = ans !== undefined;
+  const showAnswer = isAnswered || mode === 'study';
+
+  const dMap = {easy:'badge-easy',medium:'badge-medium',hard:'badge-hard',numerical:'badge-numerical'};
+  const dLabel = {easy:'Easy',medium:'Medium',hard:'Hard',numerical:'Numerical'};
+
+  let optsHTML = q.o.map((opt, i) => {
+    let cls = 'opt-btn';
+    let disabled = '';
+    if (isAnswered || mode === 'study') {
+      disabled = 'disabled';
+      if (i === q.a) cls += ' reveal-correct';
+      if (isAnswered && i === ans && ans !== q.a) cls += ' wrong';
+      if (isAnswered && i === ans && ans === q.a) cls += ' correct';
+    }
+    return `<button class="${cls}" onclick="choose(${gi},${i})" ${disabled}>
+      <span class="opt-letter">${String.fromCharCode(65+i)}</span>
+      <span>${opt}</span>
+    </button>`;
+  }).join('');
+
+  const expShow = showAnswer ? 'show' : '';
+  const expText = q.e.replace(/\n/g, '<br>');
+
+  document.getElementById('q-card').innerHTML = `
+    <div class="q-card-header">
+      <span class="q-number">Q${current+1} / ${filtered.length}</span>
+      <span class="badge ${dMap[q.d]}">${dLabel[q.d]}</span>
+      <span class="q-topic">${q.t}</span>
+    </div>
+    <div class="q-text">${q.q}</div>
+    <div class="options">${optsHTML}</div>
+    <div class="explanation ${expShow}">
+      <span class="explanation-label">Explanation</span>
+      ${expText}
+    </div>`;
+
+  document.getElementById('nav-pos').textContent = `Q ${current+1} of ${filtered.length}`;
+  document.getElementById('btn-prev').disabled = current===0;
+  document.getElementById('btn-next').disabled = current===filtered.length-1;
+
+  renderOverview();
+  updateStats();
+}
+
+function choose(gi, choice) {
+  if (answered[gi] !== undefined) return;
+  if (mode === 'study') return;
+  answered[gi] = choice;
+  const q = QS[gi];
+  if (choice === q.a) {
+    correctCount++;
+    showToast('✓ Correct!', 'success');
+  } else {
+    wrongCount++;
+    showToast('✗ Incorrect — see explanation below', 'error');
+  }
+  renderQ();
+  checkComplete();
+}
+
+function checkComplete() {
+  const total = Object.keys(answered).length;
+  if (total === QS.length) {
+    setTimeout(() => showResult(), 800);
+  }
+}
+
+function showResult() {
+  const pct = Math.round((correctCount/QS.length)*100);
+  const emoji = pct>=90?'🏆':pct>=70?'🎉':pct>=50?'💪':'📚';
+  const msg = pct>=90?'Outstanding! You are exam-ready.':pct>=70?'Great work! Review the ones you missed.':pct>=50?'Good effort. Focus on harder topics.':'Keep studying — you will get there!';
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-score').innerHTML = `${correctCount}<span>/${QS.length}</span>`;
+  document.getElementById('result-msg').textContent = `${pct}% — ${msg}`;
+  document.getElementById('r-correct').textContent = correctCount;
+  document.getElementById('r-wrong').textContent = wrongCount;
+  document.getElementById('r-skip').textContent = QS.length - correctCount - wrongCount;
+  document.getElementById('result-overlay').classList.add('show');
+}
+
+function restartAll() {
+  answered = {}; correctCount = 0; wrongCount = 0;
+  current = 0; filtered = [...QS];
+  document.querySelectorAll('.filter-btn').forEach((b,i)=>{ if(i===0) b.classList.add('active'); else b.classList.remove('active'); });
+  document.getElementById('result-overlay').classList.remove('show');
+  renderQ(); updateStats();
+}
+
+function navigate(dir) {
+  current = Math.max(0, Math.min(filtered.length-1, current+dir));
+  renderQ();
+}
+
+function renderOverview() {
+  const container = document.getElementById('q-overview');
+  container.innerHTML = QS.map((q,i) => {
+    let cls = 'q-dot';
+    const fi = filtered.indexOf(q);
+    if (fi === current) cls += ' current';
+    if (answered[i] !== undefined) {
+      cls += answered[i]===q.a ? ' answered-correct' : ' answered-wrong';
+    }
+    return `<div class="${cls}" onclick="jumpTo(${i})" title="Q${i+1}: ${q.t}">${i+1}</div>`;
+  }).join('');
+}
+
+function jumpTo(gi) {
+  const fi = filtered.indexOf(QS[gi]);
+  if (fi !== -1) { current = fi; renderQ(); }
+}
+
+function updateStats() {
+  const done = Object.keys(answered).length;
+  document.getElementById('s-done').textContent = done;
+  document.getElementById('s-correct').textContent = correctCount;
+  document.getElementById('s-wrong').textContent = wrongCount;
+  const pct = done>0 ? Math.round((correctCount/done)*100) : 0;
+  document.getElementById('pct').textContent = pct+'%';
+  const offset = 251 - (done/QS.length)*251;
+  document.getElementById('ring').style.strokeDashoffset = offset;
+  document.getElementById('prog-fill').style.width = Math.round((done/QS.length)*100)+'%';
+  document.getElementById('prog-pct').textContent = `${done} / ${QS.length}`;
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(()=>t.className='toast', 2000);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (e.target.tagName==='INPUT') return;
+  if (e.key==='ArrowLeft') navigate(-1);
+  if (e.key==='ArrowRight') navigate(1);
+  const qi = ['a','b','c','d'].indexOf(e.key.toLowerCase());
+  if (qi>=0 && filtered[current]) {
+    const gi = QS.indexOf(filtered[current]);
+    if (answered[gi]===undefined && mode==='quiz') choose(gi, qi);
+  }
+});
+
+initCounts();
+renderQ();
+</script>
+</body>
+</html>

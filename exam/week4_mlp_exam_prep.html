@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 4 — Multi-Layer Neural Networks · Exam Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #181820;
+    --surface3: #1e1e28;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0f0f5;
+    --text2: #9090a8;
+    --text3: #5a5a72;
+    --accent: #7c6fcd;
+    --accent2: #a99ef5;
+    --accent-bg: rgba(124,111,205,0.12);
+    --green: #3ecf8e;
+    --green-bg: rgba(62,207,142,0.10);
+    --red: #f06a6a;
+    --red-bg: rgba(240,106,106,0.10);
+    --amber: #f0b429;
+    --amber-bg: rgba(240,180,41,0.10);
+    --blue: #5b9cf6;
+    --blue-bg: rgba(91,156,246,0.10);
+    --easy: #3ecf8e;
+    --easy-bg: rgba(62,207,142,0.10);
+    --med: #f0b429;
+    --med-bg: rgba(240,180,41,0.10);
+    --hard: #f06a6a;
+    --hard-bg: rgba(240,106,106,0.10);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-xs: 6px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
+
+  /* HEADER */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+  }
+
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    gap: 1rem;
+  }
+
+  .site-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .site-title span { color: var(--accent2); }
+
+  .header-stats {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .hstat {
+    text-align: center;
+  }
+
+  .hstat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .hstat-label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 2px;
+  }
+
+  .hstat-num.green { color: var(--green); }
+  .hstat-num.red { color: var(--red); }
+  .hstat-num.amber { color: var(--amber); }
+
+  /* PROGRESS */
+  .progress-wrap {
+    height: 3px;
+    background: var(--surface3);
+    width: 100%;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+
+  /* MAIN */
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 5rem;
+  }
+
+  /* HERO */
+  .hero {
+    margin-bottom: 2.5rem;
+    padding: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top left, rgba(124,111,205,0.15) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+
+  .hero p {
+    font-size: 14px;
+    color: var(--text2);
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pill {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+    font-weight: 500;
+  }
+
+  .pill-purple { background: var(--accent-bg); color: var(--accent2); border-color: rgba(169,158,245,0.25); }
+  .pill-green { background: var(--easy-bg); color: var(--easy); border-color: rgba(62,207,142,0.25); }
+  .pill-amber { background: var(--med-bg); color: var(--amber); border-color: rgba(240,180,41,0.25); }
+  .pill-red { background: var(--hard-bg); color: var(--red); border-color: rgba(240,106,106,0.25); }
+
+  /* FILTERS */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1.75rem;
+    align-items: center;
+  }
+
+  .filters-label {
+    font-size: 12px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-right: 4px;
+  }
+
+  .filter-btn {
+    font-size: 13px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    font-weight: 500;
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: var(--text); }
+  .filter-btn.active { background: var(--accent-bg); border-color: var(--accent); color: var(--accent2); }
+
+  /* SECTION SEPARATOR */
+  .topic-sep {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 2rem 0 1rem;
+  }
+
+  .topic-sep-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .topic-sep-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* QUESTION CARD */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+  }
+
+  .q-card:hover { border-color: var(--border2); }
+  .q-card.answered-correct { border-color: rgba(62,207,142,0.3); }
+  .q-card.answered-wrong { border-color: rgba(240,106,106,0.2); }
+
+  .q-meta {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: var(--radius-xs);
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.02em;
+  }
+
+  .badge-num {
+    background: var(--surface3);
+    color: var(--text3);
+    border: 1px solid var(--border);
+  }
+
+  .badge-easy { background: var(--easy-bg); color: var(--easy); border: 1px solid rgba(62,207,142,0.2); }
+  .badge-medium { background: var(--med-bg); color: var(--amber); border: 1px solid rgba(240,180,41,0.2); }
+  .badge-hard { background: var(--hard-bg); color: var(--red); border: 1px solid rgba(240,106,106,0.2); }
+  .badge-topic { background: var(--accent-bg); color: var(--accent2); border: 1px solid rgba(169,158,245,0.2); font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 11px; }
+
+  .q-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+
+  /* OPTIONS */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.55;
+    transition: all 0.15s;
+    background: var(--surface2);
+    user-select: none;
+  }
+
+  .opt:hover:not(.locked) {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+    color: var(--text);
+  }
+
+  .opt.locked { cursor: default; }
+
+  .opt.correct {
+    background: var(--green-bg);
+    border-color: rgba(62,207,142,0.4);
+    color: var(--green);
+  }
+
+  .opt.wrong {
+    background: var(--red-bg);
+    border-color: rgba(240,106,106,0.3);
+    color: var(--red);
+  }
+
+  .opt-key {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    min-width: 20px;
+    padding-top: 1px;
+    opacity: 0.6;
+  }
+
+  .opt.correct .opt-key,
+  .opt.wrong .opt-key { opacity: 1; }
+
+  .opt-icon {
+    margin-left: auto;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* EXPLANATION */
+  .exp-toggle {
+    font-size: 12px;
+    padding: 6px 14px;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-xs);
+    background: transparent;
+    color: var(--text3);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    display: none;
+  }
+
+  .exp-toggle:hover { border-color: var(--accent2); color: var(--accent2); }
+  .exp-toggle.visible { display: inline-flex; align-items: center; gap: 6px; }
+
+  .explanation {
+    margin-top: 12px;
+    padding: 14px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    color: var(--text2);
+    line-height: 1.7;
+    display: none;
+    border-left: 3px solid var(--accent);
+  }
+
+  .explanation.open { display: block; animation: slideIn 0.2s ease; }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .explanation strong { color: var(--text); font-weight: 500; }
+
+  .formula {
+    font-family: 'DM Mono', monospace;
+    font-size: 12.5px;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: var(--radius-xs);
+    margin: 8px 0;
+    display: block;
+    color: var(--accent2);
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .exp-step {
+    display: flex;
+    gap: 10px;
+    margin: 6px 0;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    background: var(--accent-bg);
+    color: var(--accent2);
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* NAVIGATION */
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .nav-btn {
+    font-size: 14px;
+    padding: 10px 24px;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+
+  .nav-btn:hover:not(:disabled) { border-color: var(--accent2); background: var(--accent-bg); color: var(--accent2); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .nav-info {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+    padding: 10px 18px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  /* SCORE PANEL */
+  .score-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    text-align: center;
+  }
+
+  .score-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .score-num.g { color: var(--green); }
+  .score-num.r { color: var(--red); }
+  .score-num.a { color: var(--amber); }
+  .score-num.p { color: var(--accent2); }
+
+  .score-label {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 3rem; color: var(--text3); font-size: 14px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .main { padding: 1.5rem 1rem 4rem; }
+    .header-inner { padding: 0; }
+    .site-header { padding: 0 1rem; }
+    .hstat:nth-child(n+3) { display: none; }
+    .hero { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="site-title">6CS012 &nbsp;<span>·</span>&nbsp; Week 4 Exam Prep</div>
+    <div class="header-stats">
+      <div class="hstat"><div class="hstat-num" id="h-answered">0</div><div class="hstat-label">Done</div></div>
+      <div class="hstat"><div class="hstat-num green" id="h-correct">0</div><div class="hstat-label">Correct</div></div>
+      <div class="hstat"><div class="hstat-num amber" id="h-pct">0%</div><div class="hstat-label">Score</div></div>
+      <div class="hstat"><div class="hstat-num" style="color:var(--text3)">50</div><div class="hstat-label">Total</div></div>
+    </div>
+  </div>
+  <div class="progress-wrap"><div class="progress-fill" id="prog"></div></div>
+</header>
+
+<main class="main">
+
+  <div class="hero">
+    <span class="hero-tag">Artificial Intelligence &amp; Machine Learning · Lecture 04</span>
+    <h1>Multi-Layer Neural Networks<br>MCQ Exam Practice</h1>
+    <p>50 questions based on your lecture slides. Select an option to answer, then reveal the explanation. Your score is tracked in real time.</p>
+    <div class="hero-pills">
+      <span class="pill pill-purple">50 Questions</span>
+      <span class="pill pill-green">12 Easy</span>
+      <span class="pill pill-amber">24 Medium</span>
+      <span class="pill pill-red">14 Hard</span>
+    </div>
+  </div>
+
+  <div class="score-panel">
+    <div class="score-card"><div class="score-num" id="s-done">0</div><div class="score-label">Answered</div></div>
+    <div class="score-card"><div class="score-num g" id="s-correct">0</div><div class="score-label">Correct</div></div>
+    <div class="score-card"><div class="score-num r" id="s-wrong">0</div><div class="score-label">Wrong</div></div>
+    <div class="score-card"><div class="score-num a" id="s-pct">—</div><div class="score-label">Accuracy</div></div>
+    <div class="score-card"><div class="score-num p" id="s-remain">50</div><div class="score-label">Remaining</div></div>
+  </div>
+
+  <div class="filters" id="filters">
+    <span class="filters-label">Filter</span>
+    <button class="filter-btn active" data-filter="all">All (50)</button>
+    <button class="filter-btn" data-filter="easy">Easy (12)</button>
+    <button class="filter-btn" data-filter="medium">Medium (24)</button>
+    <button class="filter-btn" data-filter="hard">Hard (14)</button>
+    <button class="filter-btn" data-filter="unanswered">Unanswered</button>
+    <button class="filter-btn" data-filter="wrong">Wrong only</button>
+  </div>
+
+  <div id="q-container"></div>
+
+  <div class="nav">
+    <button class="nav-btn" id="prev-btn" onclick="changePage(-1)" disabled>← Previous</button>
+    <span class="nav-info" id="page-info">Page 1 / 5</span>
+    <button class="nav-btn" id="next-btn" onclick="changePage(1)">Next →</button>
+  </div>
+
+</main>
+
+<script>
+const QUESTIONS = [
+  {topic:"Perceptron & Limitations",diff:"easy",q:"What is the primary role of an activation function in a perceptron?",opts:["To store weight values","To introduce non-linearity to the neuron's output","To compute the loss function","To normalise input data"],ans:1,exp:`<strong>Answer: B — Introduce non-linearity.</strong><br><br>Activation functions introduce non-linearity into the network. Without them, stacking multiple layers would still produce a purely linear transformation — no matter how deep the network, it could only learn linear decision boundaries. Non-linear activations allow the network to learn complex, curved boundaries needed for real-world data.`},
+  {topic:"Perceptron & Limitations",diff:"easy",q:"The original perceptron uses which activation function?",opts:["Sigmoid","ReLU","Unit step function","Softmax"],ans:2,exp:`<strong>Answer: C — Unit step function.</strong><br><br>The original perceptron (Rosenblatt, 1958) uses the unit step function: f(z) = 1 if z ≥ 0, else 0. This creates a hard binary output. It is problematic because it is non-differentiable at z=0 and has zero derivative everywhere else, making gradient-based learning impossible.`},
+  {topic:"Perceptron & Limitations",diff:"medium",q:"Why is the unit step function NOT suitable for deep neural networks?",opts:["It outputs values between 0 and 1","It is non-differentiable, making gradient-based optimisation impossible","It introduces too much non-linearity","It is computationally too expensive"],ans:1,exp:`<strong>Answer: B — Non-differentiable.</strong><br><br>Backpropagation requires computing the derivative of the loss with respect to each weight using the chain rule. The unit step function has no meaningful derivative — it is 0 everywhere except at z=0 where it is undefined. This means gradients cannot flow backward through the network, so weights cannot be updated.`},
+  {topic:"Perceptron & Limitations",diff:"medium",q:"A perceptron can successfully classify data only if the data is:",opts:["Non-linearly separable","Linearly separable","Multi-class","High dimensional"],ans:1,exp:`<strong>Answer: B — Linearly separable.</strong><br><br>A single perceptron draws one straight line (hyperplane) as its decision boundary. It can only separate classes that lie on different sides of a straight line. Examples where this works: 0 vs 1 in MNIST. Examples where it fails: 3 vs 5 in MNIST, or the XOR problem — these require curved boundaries.`},
+  {topic:"Perceptron & Limitations",diff:"hard",q:"In the XOR problem, a single-layer perceptron fails because:",opts:["There are too many training examples","No linear decision boundary can correctly separate all XOR outputs","The learning rate is too high","The sigmoid function saturates"],ans:1,exp:`<strong>Answer: B — Not linearly separable.</strong><br><br>XOR truth table: (0,0)→0, (0,1)→1, (1,0)→1, (1,1)→0. Plotting on a 2D graph, the two classes form an XOR pattern — no single straight line can put all 0s on one side and all 1s on the other. This is why the lecture shows "not such value of w's could be found" — the perceptron learning algorithm cannot converge.`},
+  {topic:"Sigmoid & Activation",diff:"easy",q:"The sigmoid activation function σ(z) maps any real input to which range?",opts:["(−∞, +∞)","[0, 1]","[−1, 1]","[0, +∞)"],ans:1,exp:`<strong>Answer: B — [0, 1].</strong><br><br>σ(z) = 1 / (1 + e^{−z}). As z→+∞, σ→1. As z→−∞, σ→0. The output is always a value between 0 and 1 (exclusive), making it ideal for modelling probabilities and binary classification outputs.`},
+  {topic:"Sigmoid & Activation",diff:"medium",q:"Which of the following is the correct formula for the sigmoid function?",opts:["σ(z) = z / (1+z)","σ(z) = 1 / (1 + e^(−z))","σ(z) = max(0, z)","σ(z) = e^z / Σe^z"],ans:1,exp:`<strong>Answer: B — σ(z) = 1 / (1 + e^{−z}).</strong><br><br>Where z = w₀ + wᵀx (the weighted sum of inputs plus bias). Option C is ReLU (Rectified Linear Unit). Option D is Softmax — used for multiclass output layers. The sigmoid outputs a probability for binary or hidden-layer neurons.`},
+  {topic:"Sigmoid & Activation",diff:"medium",q:"Which property is NOT required of a good activation function?",opts:["Non-linearity","Differentiability","Binary output only","Computational efficiency"],ans:2,exp:`<strong>Answer: C — Binary output.</strong><br><br>The four properties of a good activation function from the lecture are: (1) Non-linearity, (2) Differentiability, (3) Computational efficiency, (4) Good gradient behaviour (no vanishing/exploding). Binary output is a LIMITATION of the unit step function — it is the opposite of a desirable property.`},
+  {topic:"Sigmoid & Activation",diff:"hard",q:"'Vanishing gradients' in deep networks is most associated with which issue?",opts:["ReLU dying neurons","Sigmoid saturation in deep networks","Softmax numerical instability","Unit step non-differentiability"],ans:1,exp:`<strong>Answer: B — Sigmoid saturation.</strong><br><br>When sigmoid outputs are near 0 or 1 (saturated), its derivative σ'(z) = σ(z)(1−σ(z)) ≈ 0. In backpropagation, the chain rule multiplies these near-zero gradients across many layers. The product approaches zero exponentially fast — this is the vanishing gradient problem, which prevents early layers from learning.`},
+  {topic:"Universal Approximation",diff:"medium",q:"The Universal Approximation Theorem (Cybenko 1989, Hornik 1991) states that a neural network with non-linear activations can:",opts:["Only classify linearly separable data","Represent any continuous non-linear function","Require exponentially many layers","Never overfit training data"],ans:1,exp:`<strong>Answer: B — Represent any continuous non-linear function.</strong><br><br>The UAT proves that a neural network with at least one hidden layer and a non-linear activation function can approximate ANY continuous function to arbitrary precision (given enough neurons). This is the theoretical foundation for why neural networks are such powerful models.`},
+  {topic:"Universal Approximation",diff:"hard",q:"According to Gelenbe et al. (1999), how many hidden neurons are needed to represent any Boolean function with n inputs?",opts:["n neurons","n² neurons","2ⁿ neurons","log₂(n) neurons"],ans:2,exp:`<strong>Answer: C — 2ⁿ neurons.</strong><br><br>For n=2 inputs → 2²=4 neurons needed. For n=10 inputs → 2¹⁰=1024 neurons. For n=784 (MNIST) → 2^784 neurons — astronomically large! This exponential growth is why single hidden-layer networks are impractical for real problems, motivating the use of deep multi-layer networks.`},
+  {topic:"Universal Approximation",diff:"medium",q:"Why do we prefer deep networks over one very wide single hidden layer?",opts:["Deep networks are always more accurate","A single layer requires exponentially many neurons, making it computationally inefficient","Deep networks need less training data","Single layers cannot use sigmoid"],ans:1,exp:`<strong>Answer: B — Exponential neuron count.</strong><br><br>While a single hidden layer can theoretically approximate any function (UAT), it may need an astronomically large number of neurons (2ⁿ). Deep networks distribute computation across multiple layers, each learning progressively more abstract features. They achieve the same representational power with far fewer total parameters.`},
+  {topic:"Network Architecture",diff:"easy",q:"In a neural network, what does the 'input layer' do?",opts:["Applies activation functions","Computes weighted sums","Serves as a placeholder for input values — no computation occurs","Normalises the output"],ans:2,exp:`<strong>Answer: C — Placeholder only.</strong><br><br>The input layer holds the input feature values (e.g., pixel values). It performs NO computation — no weights, no activation functions. This is why it is NOT counted as a layer when referring to network depth. For MNIST: input layer = 784 neurons, one per pixel.`},
+  {topic:"Network Architecture",diff:"easy",q:"A Deep Neural Network is defined as any network with more than how many hidden layers?",opts:["0","1","2","5"],ans:2,exp:`<strong>Answer: C — More than 2 hidden layers.</strong><br><br>From the lecture: "Deep Neural Network: Any network with more than 2 hidden layers." Networks with 1 hidden layer = shallow/single-layer. Networks with 1–2 hidden layers = shallow networks. More than 2 = deep networks (DNNs).`},
+  {topic:"Network Architecture",diff:"medium",q:"For MNIST (28×28 pixel grayscale images), how many neurons does the input layer require?",opts:["28","56","784","1024"],ans:2,exp:`<strong>Answer: C — 784 neurons.</strong><br><br>Calculation: 28 × 28 × 1 (grayscale, single channel) = 784 pixels. Each pixel becomes one input neuron. The 2D image is "flattened" into a 1D vector of 784 values — this is x ∈ ℝ⁷⁸⁴ as shown in the lecture's Model-1 example.`},
+  {topic:"Network Architecture",diff:"medium",q:"For 10-class classification (MNIST digits 0–9), how many output neurons are required?",opts:["1","2","9","10"],ans:3,exp:`<strong>Answer: D — 10 neurons.</strong><br><br>For multiclass classification, the output layer has one neuron per class. Each neuron computes P(y=k | x) — the probability the input belongs to class k. With softmax activation: all 10 outputs sum to 1.0. The predicted class = argmax(ŷ).`},
+  {topic:"Network Architecture",diff:"medium",q:"In Model-1 (MNIST: 784→64→128→512→10), what is the shape of weight matrix W¹?",opts:["64 × 64","784 × 64","64 × 784","10 × 64"],ans:2,exp:`<strong>Answer: C — W¹ ∈ ℝ^{64×784}.</strong><br><br><span class="formula">W¹ shape = [output neurons × input neurons] = [64 × 784]</span>Layer 1 has 64 neurons, each connected to all 784 inputs. Each of the 64 rows is one neuron's weight vector. Matrix multiply: z¹ = W¹x + b¹ gives z¹ ∈ ℝ⁶⁴.`},
+  {topic:"Network Architecture",diff:"hard",q:"In Model-1, what is the shape of W² for the second hidden layer (128 neurons)?",opts:["128 × 64","64 × 128","128 × 512","512 × 128"],ans:0,exp:`<strong>Answer: A — W² ∈ ℝ^{128×64}.</strong><br><br><span class="formula">W² shape = [128 neurons in layer 2] × [64 activations from layer 1]</span>The second layer takes h¹ ∈ ℝ⁶⁴ as input and produces h² ∈ ℝ¹²⁸. z² = W²h¹ + b² → dimensions: [128×64]×[64×1] + [128×1] = [128×1]. ✓`},
+  {topic:"Network Architecture",diff:"hard",q:"For binary classification using sigmoid, the typical output layer configuration is:",opts:["0 neurons","1 neuron with sigmoid","2 neurons with softmax","Depends on training data size"],ans:1,exp:`<strong>Answer: B — 1 neuron with sigmoid.</strong><br><br>Binary classification: 1 output neuron with sigmoid. Output ≥ 0.5 → class 1; < 0.5 → class 0. The lecture notes that 2 neurons with softmax is also possible (for demonstration) but "not a common practice." The standard approach is 1 sigmoid neuron.`},
+  {topic:"Network Architecture",diff:"medium",q:"Which activation function is used in the output layer for multiclass classification?",opts:["ReLU","Sigmoid","Tanh","Softmax"],ans:3,exp:`<strong>Answer: D — Softmax.</strong><br><br>Softmax: ŷⱼ = e^zⱼ / Σₖ e^zₖ. Properties: (1) All outputs are positive (due to exp), (2) All outputs sum to exactly 1.0 — forming a valid probability distribution. This is required for multiclass classification where one class must be selected. Sigmoid is used for binary classification.`},
+  {topic:"Forward Propagation",diff:"easy",q:"Forward propagation means:",opts:["Errors are sent backward to update weights","Input is passed forward through layers to produce a prediction","Weights are randomly initialised","The loss function is minimised directly"],ans:1,exp:`<strong>Answer: B — Input passes forward to produce ŷ.</strong><br><br>Forward propagation: x → Layer 1 → Layer 2 → ... → Output ŷ. At each layer: (1) compute z = Wx + b (weighted sum), (2) apply activation a = f(z). Results propagate forward until the final output ŷ is produced. This is also called "feedforward computation."`},
+  {topic:"Forward Propagation",diff:"medium",q:"What are the two computations performed by each neuron?",opts:["Normalisation and activation","Weighted sum and activation function","Convolution and pooling","Forward pass and backward pass"],ans:1,exp:`<strong>Answer: B — Weighted sum + activation.</strong><br><br><span class="formula">Step 1: z = Σᵢ wᵢxᵢ + b  (weighted sum)
+Step 2: a = f(z)           (activation function)</span>Every neuron in a fully connected layer performs exactly these two operations. The lecture explicitly states: "Each individual neuron performs two tasks: Compute a weighted sum and Applies an activation function."`},
+  {topic:"Forward Propagation",diff:"medium",q:"Given h¹ = σ(W¹·x + b¹), what does h¹ represent?",opts:["The loss at layer 1","The activated output vector of hidden layer 1","The gradient at layer 1","The weight matrix at layer 1"],ans:1,exp:`<strong>Answer: B — Activated output of layer 1.</strong><br><br>h¹ ∈ ℝ⁶⁴ (for Model-1) is the vector of activated outputs from hidden layer 1. Process: z¹ = W¹x + b¹ (linear transformation), then h¹ = σ(z¹) applies sigmoid element-wise to each of the 64 values. h¹ then becomes the input to layer 2.`},
+  {topic:"Forward Propagation",diff:"hard",q:"In Model-1, ŷ = Softmax(z⁴) where z⁴ = W⁴h³ + b⁴. What is the dimension of ŷ?",opts:["512","128","10","1"],ans:2,exp:`<strong>Answer: C — ŷ ∈ ℝ¹⁰.</strong><br><br><span class="formula">W⁴ ∈ ℝ^{10×512}, h³ ∈ ℝ^{512}, b⁴ ∈ ℝ^{10}
+z⁴ = W⁴h³ + b⁴  →  [10×512]×[512×1] + [10×1] = [10×1]
+ŷ = softmax(z⁴) ∈ ℝ^{10}</span>10 outputs because there are 10 digit classes (0–9). Each ŷⱼ = P(y=j | x).`},
+  {topic:"Softmax",diff:"medium",q:"The softmax function for class j is defined as:",opts:["e^zⱼ / Σₖ e^zₖ","1 / (1 + e^(−z))","max(0, z)","zⱼ / Σₖ zₖ"],ans:0,exp:`<strong>Answer: A — e^zⱼ / Σₖ e^zₖ.</strong><br><br><span class="formula">ŷⱼ = exp(zⱼ) / Σₖ₌₁ᶜ exp(zₖ)    for j ∈ {1, 2, ..., C}</span>The exponential ensures all values are positive. Dividing by the sum normalises them to sum to 1. Option B is sigmoid. Option C is ReLU. Option D would fail for negative logits.`},
+  {topic:"Softmax",diff:"hard",q:"Given logits z = [2, 1, 0] for 3 classes, which class is predicted?",opts:["Class 3 (z=0)","Class 2 (z=1)","Class 1 (z=2)","Cannot determine without computing softmax"],ans:2,exp:`<strong>Answer: C — Class 1 (z=2).</strong><br><br>The predicted class = argmax(ŷ) = argmax(softmax(z)). Since softmax is a monotonically increasing function, argmax(softmax(z)) = argmax(z). The largest logit is z₁=2, so Class 1 is predicted. You do NOT need to compute the full softmax to find the predicted class.`},
+  {topic:"Loss Function",diff:"easy",q:"Categorical Cross-Entropy (CE) loss is used primarily for:",opts:["Regression problems","Binary classification only","Multiclass classification","Dimensionality reduction"],ans:2,exp:`<strong>Answer: C — Multiclass classification.</strong><br><br>CE loss measures how well the predicted probability distribution matches the true class labels. It is the standard loss function for classification tasks where the output is a probability distribution (softmax output). For regression, Mean Squared Error (MSE) is used instead.`},
+  {topic:"Loss Function",diff:"medium",q:"The CE loss formula for one sample is ℓ(y, ŷ) = ?",opts:["−Σₖ yₖ log(ŷₖ)","Σₖ (yₖ − ŷₖ)²","−Σₖ ŷₖ log(yₖ)","Σₖ |yₖ − ŷₖ|"],ans:0,exp:`<strong>Answer: A — −Σₖ yₖ log(ŷₖ).</strong><br><br><span class="formula">ℓ(y, ŷ) = −Σₖ₌₁ᶜ yₖ log(ŷₖ)</span>Since y is one-hot encoded (one yₖ=1, rest=0), this simplifies to: ℓ = −log(ŷ_true_class). It penalises low probability assigned to the correct class. Option C has the arguments reversed — that is wrong. Option B is MSE.`},
+  {topic:"Loss Function",diff:"medium",q:"One-hot encoding of 'Dog' in a [Cat, Dog, Car] classification is:",opts:["[1, 0, 0]","[0, 1, 0]","[0, 0, 1]","[0.33, 0.33, 0.33]"],ans:1,exp:`<strong>Answer: B — [0, 1, 0].</strong><br><br>One-hot encoding: a vector of zeros with a single 1 at the index of the correct class. Cat = index 0 → [1,0,0]. Dog = index 1 → [0,1,0]. Car = index 2 → [0,0,1]. This representation is used as the target y in the CE loss formula.`},
+  {topic:"Loss Function",diff:"hard",q:"Model predicts ŷ = [0.4, 0.4, 0.2] for true label Dog (y = [0,1,0]). What is the CE loss?",opts:["0.40","0.92","0.22","1.61"],ans:1,exp:`<strong>Answer: B ≈ 0.92.</strong><br><br><span class="formula">CE = −Σₖ yₖ log(ŷₖ)
+   = −(0 × log(0.4) + 1 × log(0.4) + 0 × log(0.2))
+   = −log(0.4)
+   = −(−0.916)
+   = 0.916 ≈ 0.92</span>The loss is HIGH because the model is confused — it assigns equal probability (40%) to Cat and Dog. A good model should assign close to 100% to Dog.`},
+  {topic:"Loss Function",diff:"hard",q:"Model predicts ŷ = [0.1, 0.2, 0.7] for true label Car (y = [0,0,1]). CE loss ≈ ?",opts:["0.15","0.36","1.20","0.70"],ans:1,exp:`<strong>Answer: B ≈ 0.36.</strong><br><br><span class="formula">CE = −Σₖ yₖ log(ŷₖ)
+   = −(0 × log(0.1) + 0 × log(0.2) + 1 × log(0.7))
+   = −log(0.7)
+   = −(−0.357)
+   = 0.357 ≈ 0.36</span>The loss is LOW because the model correctly assigns 70% probability to Car. The goal of training is to push ŷ_car towards 1.0, driving the loss towards 0.`},
+  {topic:"Loss Function",diff:"medium",q:"The empirical risk R̂ (cost function) over n training samples is:",opts:["Maximum of individual losses","−(1/n) Σᵢ Σₖ yᵢₖ log(ŷᵢₖ)","Σᵢ (yᵢ − ŷᵢ)²","−(1/n) Σᵢ ŷᵢ log(yᵢ)"],ans:1,exp:`<strong>Answer: B — Average CE loss.</strong><br><br><span class="formula">R̂ = −(1/n) Σᵢ₌₁ⁿ Σₖ₌₁ᶜ yᵢₖ log(ŷᵢₖ)</span>This averages the CE loss over all n training examples across all C classes. This is the quantity that gradient descent minimises during training. Also called the "cost function" in the lecture.`},
+  {topic:"Backpropagation",diff:"easy",q:"What is the purpose of backpropagation?",opts:["To make forward predictions","To propagate errors backward to update weights and biases","To initialise network weights","To compute the softmax output"],ans:1,exp:`<strong>Answer: B — Propagate errors backward to update weights.</strong><br><br>Backpropagation computes ∂L/∂w for every weight in the network by applying the chain rule recursively from the output layer to the input layer. These gradients tell gradient descent how to adjust each weight to reduce the loss.`},
+  {topic:"Backpropagation",diff:"medium",q:"What mathematical rule does backpropagation use to compute gradients through multiple layers?",opts:["Product rule","Quotient rule","Chain rule","Integration by parts"],ans:2,exp:`<strong>Answer: C — Chain rule.</strong><br><br><span class="formula">dL/dw = (∂L/∂a) · (∂a/∂z) · (∂z/∂w)</span>The chain rule allows us to decompose the derivative of the loss with respect to any weight into a product of local derivatives. Backprop applies this recursively layer by layer, reusing computations for efficiency.`},
+  {topic:"Backpropagation",diff:"medium",q:"Which of the following is NOT required for backpropagation?",opts:["A dataset of (x, y) pairs","A feedforward neural network","A differentiable error function","A convolutional architecture"],ans:3,exp:`<strong>Answer: D — Convolutional architecture.</strong><br><br>Backprop requires: (1) labelled dataset pairs (xᵢ, yᵢ), (2) a feedforward neural network, (3) a differentiable error/loss function. A convolutional architecture (CNNs) is one specific type of network — backprop works on any feedforward network including fully connected, convolutional, recurrent, etc.`},
+  {topic:"Backpropagation",diff:"hard",q:"Why couldn't the Perceptron Learning Algorithm train multi-layer networks?",opts:["It requires too much memory","It cannot propagate error signals to hidden layers — it has no backpropagation mechanism","It only works with softmax","It requires binary inputs"],ans:1,exp:`<strong>Answer: B — No error propagation to hidden layers.</strong><br><br>The Perceptron Learning Algorithm: w_{k+1} = wₖ + η(error)xₖ. This only updates the output layer weights based on the output error. It has no mechanism to determine how much each hidden neuron contributed to the error, so hidden layer weights cannot be updated. Backpropagation (using chain rule) solves this.`},
+  {topic:"Gradient Descent",diff:"easy",q:"In Batch Gradient Descent, the gradient is computed using:",opts:["One random training sample","A small batch of samples","The entire training dataset","The validation set only"],ans:2,exp:`<strong>Answer: C — The entire training dataset.</strong><br><br>Batch GD (aka vanilla GD) computes: w = w − α∇_w J(θ) where J(θ) is computed over ALL n training examples. This gives an accurate gradient estimate but requires loading the entire dataset for each update — very slow and memory-intensive for large datasets.`},
+  {topic:"Gradient Descent",diff:"easy",q:"The weight update rule in gradient descent is:",opts:["w = w + α∇J(θ)","w = w − α∇J(θ)","w = α∇J(θ)","w = w × α∇J(θ)"],ans:1,exp:`<strong>Answer: B — w = w − α∇J(θ).</strong><br><br>We SUBTRACT the gradient because we want to move DOWNHILL on the loss surface. The gradient ∇J points in the direction of steepest INCREASE — so subtracting it moves toward the minimum. α (learning rate) controls the step size. If α is too large: oscillation. If too small: very slow convergence.`},
+  {topic:"Gradient Descent",diff:"medium",q:"Stochastic Gradient Descent (SGD) performs a weight update after:",opts:["Every epoch","Every mini-batch","Every single training example","The entire training set"],ans:2,exp:`<strong>Answer: C — Every single training example.</strong><br><br><span class="formula">w = w − α∇_w J(w; xⁱ; yⁱ)</span>SGD computes the gradient from ONE example and immediately updates weights. This is very fast (one update per example) but produces noisy gradient estimates that cause the loss to oscillate — as shown in the lecture's figure of the loss curve with large spikes.`},
+  {topic:"Gradient Descent",diff:"medium",q:"Mini-Batch Gradient Descent updates weights after:",opts:["Every example","A subset (batch) of n training examples","The full dataset","Every 1000 epochs"],ans:1,exp:`<strong>Answer: B — A mini-batch of n examples.</strong><br><br><span class="formula">w = w − α∇_w J(w; x^{i:i+n}; y^{i:i+n})</span>Mini-Batch GD is the compromise: compute gradient over n examples (batch), then update. It combines the stability of Batch GD (less noisy gradient) with the speed of SGD. This is the method used in practice for training deep neural networks.`},
+  {topic:"Gradient Descent",diff:"medium",q:"What is the typical mini-batch size range stated in the lecture?",opts:["1 to 10","10 to 50","50 to 256","1000 to 10000"],ans:2,exp:`<strong>Answer: C — 50 to 256.</strong><br><br>The lecture states common mini-batch sizes range between 50 and 256. Powers of 2 (64, 128, 256) are especially common because they align with GPU memory architecture (CUDA parallelism). The batch size is a hyperparameter — too small → noisy, too large → slow and poor generalisation.`},
+  {topic:"Gradient Descent",diff:"hard",q:"High variance in SGD updates means the model can:",opts:["Converge faster to exact global minimum","Jump to new potentially better local minima, but may struggle to converge precisely","Always find global minimum","Never overfit"],ans:1,exp:`<strong>Answer: B — Jump to better minima but imprecise convergence.</strong><br><br>SGD's noise is a double-edged sword: the frequent oscillations can help escape bad local minima (beneficial), but they also prevent the model from settling precisely at a minimum (harmful). This is why annealing (reducing learning rate over time) is used — large steps early, small steps late.`},
+  {topic:"Gradient Descent",diff:"hard",q:"'Annealing' in gradient descent training refers to:",opts:["Increasing the learning rate over time","Reducing the learning rate according to a schedule or threshold","Increasing batch size over time","Using momentum to escape local minima"],ans:1,exp:`<strong>Answer: B — Reducing learning rate over time.</strong><br><br>Annealing strategies: reduce α when loss plateaus, use a pre-defined schedule (e.g., halve every 10 epochs), or reduce when α < threshold. The lecture states: "towards the end of mini-batch learning it nearly always helps to turn down the learning rate — this removes fluctuations in the final weights."`},
+  {topic:"Gradient Descent",diff:"medium",q:"Batch Gradient Descent is 'intractable' for very large datasets because:",opts:["It uses too many layers","It must process the entire dataset for each weight update, which is extremely slow","It cannot compute gradients","It does not support backpropagation"],ans:1,exp:`<strong>Answer: B — Must load entire dataset for each update.</strong><br><br>With 1 million training examples, BGD computes the gradient over all 1 million examples before making ONE weight update. This is extremely slow. Furthermore, if the dataset doesn't fit in memory, BGD becomes impossible. SGD and mini-batch GD solve this by using subsets.`},
+  {topic:"Network Design",diff:"medium",q:"Too many neurons per hidden layer typically causes:",opts:["Underfitting","Overfitting","Faster training","Better generalisation always"],ans:1,exp:`<strong>Answer: B — Overfitting.</strong><br><br>Excessive capacity allows the model to memorise training examples rather than learning general patterns. The lecture advises: "Start simple — start with reasonable sizes e.g., powers of 2 → 32, 64, 128 → increase the complexity as per requirement." Decreasing neurons → underfitting.`},
+  {topic:"Network Design",diff:"medium",q:"The number of hidden layers and neurons per layer are called:",opts:["Parameters","Hyperparameters","Gradients","Activation values"],ans:1,exp:`<strong>Answer: B — Hyperparameters.</strong><br><br>Hyperparameters are design decisions made BEFORE training begins — they are not learned from data. They include: number of layers (L^k), neurons per layer (k_n), learning rate (α), batch size, activation function choice. In contrast, weights W and biases b are parameters learned during training.`},
+  {topic:"Network Design",diff:"hard",q:"Two motivations for deep networks (Goodfellow et al.) are:",opts:["Speed and simplicity","Statistical (hierarchical composition) and Computational expressiveness","Memory efficiency and interpretability","Fewer parameters and faster inference"],ans:1,exp:`<strong>Answer: B — Statistical and Computational.</strong><br><br>(1) Statistical: Deep networks are compositional — they build complex patterns from simple ones hierarchically. In vision: edges → shapes → objects. This aligns with the structure of real-world data. (2) Computational/Expressiveness: Under certain conditions, deep architectures can be more expressive than shallow ones with the same total parameters.`},
+  {topic:"Network Design",diff:"hard",q:"In a 'fully connected' layer, every neuron connects to:",opts:["Only nearby neurons","Only neurons in the same layer","All neurons in the previous layer","Only the input layer neurons"],ans:2,exp:`<strong>Answer: C — All neurons in the previous layer.</strong><br><br>"Fully connected" (aka Dense layer) means every neuron in layer L receives input from EVERY neuron in layer L-1. This is why the weight matrix W has shape [neurons_L × neurons_{L-1}]. This is the most general connectivity pattern — every possible connection exists.`},
+  {topic:"Shallow vs Deep",diff:"medium",q:"A 'shallow' neural network is best described as:",opts:["A network with no hidden layers","A network with one or a few hidden layers to avoid exponential neuron counts in one layer","A network that cannot solve XOR","A linear classifier"],ans:1,exp:`<strong>Answer: B — Few hidden layers, fewer neurons per layer.</strong><br><br>Shallow networks distribute computation across 1–2 hidden layers with fewer neurons per layer, avoiding the 2ⁿ neuron count of single hidden-layer networks. They capture complex patterns more efficiently than one wide layer but are less expressive than deep networks.`},
+  {topic:"Shallow vs Deep",diff:"hard",q:"Which limitation of shallow networks does the lecture NOT mention?",opts:["Universality — may need impractically many neurons","Expressivity — may not capture complex boundaries","Learnability — may get stuck in local minima","Interpretability — difficult to understand decisions"],ans:3,exp:`<strong>Answer: D — Interpretability.</strong><br><br>The lecture explicitly lists three limitations of shallow networks: (1) Universality — single hidden layer may need exponentially many neurons; (2) Expressivity — may not capture complex non-linear boundaries; (3) Learnability — no guarantee gradient descent finds the optimal solution. Interpretability is not discussed in this context.`},
+  {topic:"ERM Framework",diff:"hard",q:"In the ERM framework, training a DNN means finding θ* = (W, b) that:",opts:["Maximises the loss function","Minimises the empirical risk — average CE loss over all training data","Maximises training accuracy","Minimises the number of parameters"],ans:1,exp:`<strong>Answer: B — Minimises empirical risk.</strong><br><br><span class="formula">θ* = argmin_θ L(W, b)
+   = argmin −(1/n) Σᵢ Σₖ yᵢₖ log(ŷᵢₖ)</span>The ERM (Empirical Risk Minimisation) objective: find weights W and biases b that minimise the average categorical cross-entropy loss over the training set. This is solved iteratively using gradient descent + backpropagation.`},
+];
+
+const PER_PAGE = 10;
+let state = { answers: {}, page: 0, filter: 'all' };
+let filtered = QUESTIONS.map((_,i)=>i);
+
+function getFiltered() {
+  if (state.filter === 'all') return QUESTIONS.map((_,i)=>i);
+  if (state.filter === 'easy') return QUESTIONS.map((_,i)=>i).filter(i=>QUESTIONS[i].diff==='easy');
+  if (state.filter === 'medium') return QUESTIONS.map((_,i)=>i).filter(i=>QUESTIONS[i].diff==='medium');
+  if (state.filter === 'hard') return QUESTIONS.map((_,i)=>i).filter(i=>QUESTIONS[i].diff==='hard');
+  if (state.filter === 'unanswered') return QUESTIONS.map((_,i)=>i).filter(i=>state.answers[i]===undefined);
+  if (state.filter === 'wrong') return QUESTIONS.map((_,i)=>i).filter(i=>state.answers[i]!==undefined && state.answers[i]!==QUESTIONS[i].ans);
+  return QUESTIONS.map((_,i)=>i);
+}
+
+function updateStats() {
+  const total = Object.keys(state.answers).length;
+  let correct = 0;
+  for (let k in state.answers) { if (parseInt(state.answers[k]) === QUESTIONS[k].ans) correct++; }
+  const wrong = total - correct;
+  const pct = total > 0 ? Math.round((correct/total)*100) : null;
+  document.getElementById('h-answered').textContent = total;
+  document.getElementById('h-correct').textContent = correct;
+  document.getElementById('h-pct').textContent = pct !== null ? pct + '%' : '0%';
+  document.getElementById('s-done').textContent = total;
+  document.getElementById('s-correct').textContent = correct;
+  document.getElementById('s-wrong').textContent = wrong;
+  document.getElementById('s-pct').textContent = pct !== null ? pct + '%' : '—';
+  document.getElementById('s-remain').textContent = 50 - total;
+  document.getElementById('prog').style.width = (total/50*100) + '%';
+}
+
+function answer(qIdx, optIdx) {
+  if (state.answers[qIdx] !== undefined) return;
+  state.answers[qIdx] = optIdx;
+  updateStats();
+  renderCard(qIdx);
+  if (state.filter === 'unanswered' || state.filter === 'wrong') render();
+}
+
+function toggleExp(qIdx) {
+  const el = document.getElementById('exp-' + qIdx);
+  const btn = document.getElementById('expbtn-' + qIdx);
+  if (!el) return;
+  const open = el.classList.toggle('open');
+  btn.textContent = open ? '▲ Hide explanation' : '▼ Show explanation';
+}
+
+function diffBadge(d) {
+  const map = { easy: 'badge-easy', medium: 'badge-medium', hard: 'badge-hard' };
+  return `<span class="badge ${map[d]}">${d}</span>`;
+}
+
+function renderCard(qIdx) {
+  const card = document.getElementById('card-' + qIdx);
+  if (!card) return;
+  const q = QUESTIONS[qIdx];
+  const answered = state.answers[qIdx];
+  const optsHtml = q.opts.map((o, oi) => {
+    let cls = 'opt';
+    let icon = '';
+    if (answered !== undefined) {
+      cls += ' locked';
+      if (oi === q.ans) { cls += ' correct'; icon = '<span class="opt-icon">✓</span>'; }
+      else if (oi === answered) { cls += ' wrong'; icon = '<span class="opt-icon">✗</span>'; }
+    }
+    return `<div class="${cls}" onclick="answer(${qIdx},${oi})">
+      <span class="opt-key">${String.fromCharCode(65+oi)}.</span>
+      <span>${o}</span>
+      ${icon}
+    </div>`;
+  }).join('');
+  const btnHtml = answered !== undefined
+    ? `<button class="exp-toggle visible" id="expbtn-${qIdx}" onclick="toggleExp(${qIdx})">▼ Show explanation</button>`
+    : '';
+  card.querySelector('.opts-wrap').innerHTML = optsHtml;
+  card.querySelector('.btn-wrap').innerHTML = btnHtml;
+  if (answered !== undefined) {
+    card.classList.remove('answered-correct','answered-wrong');
+    if (answered === q.ans) card.classList.add('answered-correct');
+    else card.classList.add('answered-wrong');
+  }
+}
+
+function render() {
+  filtered = getFiltered();
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  state.page = Math.min(state.page, totalPages - 1);
+  const start = state.page * PER_PAGE;
+  const pageItems = filtered.slice(start, start + PER_PAGE);
+
+  document.getElementById('page-info').textContent = `Page ${state.page+1} / ${totalPages}`;
+  document.getElementById('prev-btn').disabled = state.page === 0;
+  document.getElementById('next-btn').disabled = state.page >= totalPages - 1;
+
+  if (pageItems.length === 0) {
+    document.getElementById('q-container').innerHTML = '<div class="empty">No questions match this filter.</div>';
+    return;
+  }
+
+  let html = '';
+  let lastTopic = '';
+  pageItems.forEach(qIdx => {
+    const q = QUESTIONS[qIdx];
+    if (q.topic !== lastTopic) {
+      html += `<div class="topic-sep"><span class="topic-sep-text">${q.topic}</span><div class="topic-sep-line"></div></div>`;
+      lastTopic = q.topic;
+    }
+    const answered = state.answers[qIdx];
+    const optsHtml = q.opts.map((o, oi) => {
+      let cls = 'opt';
+      let icon = '';
+      if (answered !== undefined) {
+        cls += ' locked';
+        if (oi === q.ans) { cls += ' correct'; icon = '<span class="opt-icon">✓</span>'; }
+        else if (oi === answered) { cls += ' wrong'; icon = '<span class="opt-icon">✗</span>'; }
+      }
+      return `<div class="${cls}" onclick="answer(${qIdx},${oi})">
+        <span class="opt-key">${String.fromCharCode(65+oi)}.</span>
+        <span>${o}</span>
+        ${icon}
+      </div>`;
+    }).join('');
+    const btnHtml = answered !== undefined
+      ? `<button class="exp-toggle visible" id="expbtn-${qIdx}" onclick="toggleExp(${qIdx})">▼ Show explanation</button>`
+      : '';
+    const cardCls = answered !== undefined ? (answered === q.ans ? 'q-card answered-correct' : 'q-card answered-wrong') : 'q-card';
+    html += `<div class="${cardCls}" id="card-${qIdx}">
+      <div class="q-meta">
+        <span class="badge badge-num">Q${qIdx+1}</span>
+        ${diffBadge(q.diff)}
+        <span class="badge badge-topic">${q.topic}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="opts-wrap"><div class="options">${optsHtml}</div></div>
+      <div class="btn-wrap">${btnHtml}</div>
+      <div class="explanation" id="exp-${qIdx}">${q.exp}</div>
+    </div>`;
+  });
+  document.getElementById('q-container').innerHTML = html;
+}
+
+function changePage(dir) {
+  filtered = getFiltered();
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  state.page = Math.max(0, Math.min(state.page + dir, totalPages - 1));
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('filters').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.filter = btn.dataset.filter;
+  state.page = 0;
+  render();
+});
+
+render();
+updateStats();
+</script>
+</body>
+</html>

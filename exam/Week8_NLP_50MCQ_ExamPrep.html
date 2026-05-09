@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 8 – NLP & Text Representations | 50 MCQ Exam Prep</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: #f4f1ec; color: #1a1a1a; padding: 2rem; }
+  .page-header { background: #1a1a2e; color: #fff; padding: 2rem 2.5rem; border-radius: 12px; margin-bottom: 2rem; }
+  .page-header h1 { font-size: 1.7rem; font-weight: bold; margin-bottom: 0.4rem; }
+  .page-header p { font-size: 0.95rem; color: #ccc; }
+  .score-bar { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .score-card { background: #fff; border-radius: 10px; padding: 1rem 1.5rem; flex: 1; min-width: 120px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .score-val { font-size: 2rem; font-weight: bold; }
+  .score-lbl { font-size: 0.75rem; color: #666; margin-top: 2px; }
+  .s-total { color: #1a1a2e; }
+  .s-att { color: #555; }
+  .s-cor { color: #2d7a4f; }
+  .s-pct { color: #1565c0; }
+  .progress-wrap { background: #ddd; border-radius: 4px; height: 6px; margin-bottom: 2rem; }
+  .progress-fill { background: #1565c0; height: 6px; border-radius: 4px; transition: width 0.4s; }
+  .controls { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; align-items: center; }
+  .ctrl-btn { padding: 6px 18px; border-radius: 20px; border: 1.5px solid #ccc; background: #fff; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+  .ctrl-btn:hover { background: #eee; }
+  .ctrl-btn.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+  .reset-btn { padding: 6px 18px; border-radius: 8px; border: 1.5px solid #c0392b; background: #fff; color: #c0392b; font-size: 0.85rem; cursor: pointer; margin-left: auto; }
+  .reset-btn:hover { background: #fdecea; }
+  .section-header { background: #1a1a2e; color: #fff; padding: 0.6rem 1.2rem; border-radius: 8px; margin: 2rem 0 1rem; font-size: 0.85rem; font-weight: bold; letter-spacing: 0.06em; text-transform: uppercase; }
+  .q-card { background: #fff; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.2rem; box-shadow: 0 1px 6px rgba(0,0,0,0.07); border-left: 5px solid #ccc; }
+  .q-card.type-conceptual { border-left-color: #1565c0; }
+  .q-card.type-numerical { border-left-color: #e07b00; }
+  .q-card.type-applied { border-left-color: #2d7a4f; }
+  .q-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 0.8rem; }
+  .q-num { font-size: 0.78rem; font-weight: bold; color: #555; background: #f0f0f0; padding: 2px 8px; border-radius: 6px; }
+  .q-tag { font-size: 0.75rem; padding: 2px 10px; border-radius: 10px; font-weight: bold; }
+  .tag-conceptual { background: #e3f0fb; color: #1565c0; }
+  .tag-numerical { background: #fff3e0; color: #e07b00; }
+  .tag-applied { background: #e8f5e9; color: #2d7a4f; }
+  .q-text { font-size: 1rem; font-weight: bold; color: #111; line-height: 1.6; margin-bottom: 1rem; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt-btn { padding: 10px 16px; border-radius: 8px; border: 1.5px solid #ddd; background: #fafafa; text-align: left; font-size: 0.9rem; cursor: pointer; color: #1a1a1a; line-height: 1.5; transition: all 0.2s; font-family: Georgia, serif; }
+  .opt-btn:hover:not(:disabled) { background: #f0f0f0; border-color: #bbb; }
+  .opt-btn:disabled { cursor: default; }
+  .opt-btn.correct { background: #e8f5e9; border-color: #2d7a4f; color: #1b5e20; }
+  .opt-btn.wrong { background: #fdecea; border-color: #c0392b; color: #7f0000; }
+  .explanation { display: none; margin-top: 1.2rem; padding: 1rem 1.2rem; background: #f4f8ff; border-radius: 8px; border-left: 4px solid #1565c0; font-size: 0.9rem; color: #333; line-height: 1.75; }
+  .explanation.show { display: block; }
+  .exp-title { font-weight: bold; color: #1a1a2e; margin-bottom: 0.5rem; font-size: 0.95rem; }
+  .exp-body { color: #333; }
+  .exp-body strong { color: #1a1a2e; }
+  .exp-body .formula { background: #1a1a2e; color: #fff; padding: 4px 10px; border-radius: 6px; display: inline-block; margin: 4px 0; font-family: monospace; font-size: 0.9rem; }
+  .exp-body table { border-collapse: collapse; margin: 8px 0; font-size: 0.85rem; }
+  .exp-body table th, .exp-body table td { border: 1px solid #ccc; padding: 5px 10px; }
+  .exp-body table th { background: #1a1a2e; color: #fff; }
+  @media print { body { background: #fff; } .ctrl-btn, .reset-btn { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>📘 6CS012 — Week 8: NLP & Text Representations</h1>
+  <p>50 MCQ Exam Preparation Questions | Conceptual + Numerical + Applied | With Full Explanations</p>
+</div>
+
+<div class="score-bar">
+  <div class="score-card"><div class="score-val s-total">50</div><div class="score-lbl">TOTAL QUESTIONS</div></div>
+  <div class="score-card"><div class="score-val s-att" id="s-att">0</div><div class="score-lbl">ATTEMPTED</div></div>
+  <div class="score-card"><div class="score-val s-cor" id="s-cor">0</div><div class="score-lbl">CORRECT</div></div>
+  <div class="score-card"><div class="score-val s-pct" id="s-pct">0%</div><div class="score-lbl">SCORE</div></div>
+</div>
+
+<div class="progress-wrap"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+
+<div class="controls">
+  <button class="ctrl-btn active" onclick="setFilter('all',this)">All (50)</button>
+  <button class="ctrl-btn" onclick="setFilter('conceptual',this)">Conceptual</button>
+  <button class="ctrl-btn" onclick="setFilter('numerical',this)">Numerical</button>
+  <button class="ctrl-btn" onclick="setFilter('applied',this)">Applied</button>
+  <button class="reset-btn" onclick="resetAll()">↺ Reset Quiz</button>
+</div>
+
+<div id="quiz"></div>
+
+<script>
+const Q = [
+  // ── SECTION 1: INTRO TO NLP ──
+  {s:"Section 1 — Introduction to NLP & The Challenge",t:"conceptual",
+   q:"1. What does NLP stand for in the context of Artificial Intelligence?",
+   o:["Neural Language Protocol","Natural Language Processing","Numerical Learning Process","Normalized Language Parsing"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Natural Language Processing</div>
+<div class="exp-body"><strong>NLP (Natural Language Processing)</strong> is a field of research in computer science including AI and Deep Learning, concerned with giving computers the ability to understand text and spoken words. It is essential because natural language is one of the most complex tools humans use to communicate, express thoughts, ask questions, and give instructions.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"2. Which of the following best describes Natural Language Understanding (NLU)?",
+   o:["Generating text responses for humans","Understanding the meaning of human language expressed as text","Converting spoken audio to digital signals","Training a neural network on image data"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Understanding the meaning of human language expressed as text</div>
+<div class="exp-body"><strong>NLU</strong> deals with understanding the <em>meaning</em> of human language — the 'input' side of any NLP system. In a chatbot example, when you ask 'do penguins fly?', understanding the question (meaning of 'penguin' and 'fly' and their composition) is NLU. <strong>NLG</strong> (Natural Language Generation) then produces the answer (Yes/No).</div>`},
+
+  {s:null,t:"conceptual",
+   q:"3. Natural Language Generation (NLG) is primarily responsible for:",
+   o:["Parsing the grammar of input text","Removing stop words from a sentence","Generating text or verbal responses so humans can understand","Tokenizing words into characters"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — Generating text or verbal responses so humans can understand</div>
+<div class="exp-body"><strong>NLG</strong> is the 'output' side: it produces text — verbalizating an idea or providing a response. Together NLU (understands) + NLG (responds) form any complete NLP application.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"4. Why are Convolutional Neural Networks (CNNs) not well suited for processing text data by design?",
+   o:["CNNs are too slow for text","CNNs are designed for fixed-dimension inputs (height × width × channel) and cannot natively handle variable-length sequences","CNNs cannot use the softmax activation","CNNs require labelled image data"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Fixed-dimension inputs vs. variable-length sequences</div>
+<div class="exp-body">CNNs were specifically designed for <strong>image-style inputs</strong> which have fixed dimensions (height, width, channel). Text data comes as <strong>variable-length sequences</strong> — a sentence of 3 words and a sentence of 30 words cannot both fit the same fixed-size input grid. Therefore CNNs are not suitable by design for raw text.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"5. Which of the following is NOT a common application of Natural Language Processing?",
+   o:["Machine Translation (e.g. Google Translate)","Text Summarization","Sentiment Analysis","Object Detection in images"],
+   a:3,
+   exp:`<div class="exp-title">✅ Answer: D — Object Detection in images</div>
+<div class="exp-body"><strong>Object Detection</strong> is a Computer Vision task, not NLP. Common NLP applications include: Machine Translation, Text Classification/Sentiment Analysis, Speech Recognition, Text Summarization, and Question Answering.</div>`},
+
+  // ── SECTION 2: TEXT REPRESENTATIONS (ASCII, ONE-HOT) ──
+  {s:"Section 2 — Text Representations: ASCII, One-Hot Encoding",t:"conceptual",
+   q:"6. Why is ASCII/Unicode character encoding considered a poor choice for NLP machine learning tasks?",
+   o:["It uses too many characters per word","It produces variable-length representations with no semantic information between words","It only supports English alphabet","It requires too much RAM"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Variable-length + no semantics</div>
+<div class="exp-body">Two key problems with ASCII/Unicode:
+<br><strong>Challenge 1 (Variable Length):</strong> 'desk' → 32 bits (4×8), 'desks' → 40 bits (5×8). ML models need fixed-size feature vectors.
+<br><strong>Challenge 2 (No Semantics):</strong> 'desk' and 'table' (similar meanings) get completely different binary representations. There is no notion of similarity.</div>`},
+
+  {s:null,t:"numerical",
+   q:"7. Using Modern ASCII (8-bit character encoding), what is the total bit length of the word 'table'?",
+   o:["32 bits","40 bits","48 bits","64 bits"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — 40 bits</div>
+<div class="exp-body"><strong>Step-by-step:</strong>
+<br>Modern ASCII uses <strong>8 bits per character</strong>.
+<br>'table' has <strong>5 characters</strong>: t-a-b-l-e
+<br>Total = 5 × 8 = <strong>40 bits</strong>
+<br><br>Compare: 'desk' (4 chars) = 32 bits. Variable length is the problem!</div>`},
+
+  {s:null,t:"conceptual",
+   q:"8. What is the fundamental idea behind representing words as vectors in a fixed-dimensional vector space?",
+   o:["To compress text into fewer bits","To allow fixed-size representations enabling mathematical operations like cosine similarity between words","To replace the vocabulary with a smaller set","To speed up text searching"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Fixed-size representations enabling mathematical operations</div>
+<div class="exp-body">If we define a space of dimension d=4, then <em>both</em> 'desk' and 'tables' can be represented as v = [v₁, v₂, v₃, v₄] ∈ ℝ⁴ — <strong>same length regardless of character count</strong>. This enables:
+<br>• Dot product to measure similarity
+<br>• Cosine similarity
+<br>• Arithmetic operations (king - man + woman ≈ queen)</div>`},
+
+  {s:null,t:"conceptual",
+   q:"9. In NLP terminology, a 'corpus' refers to:",
+   o:["A single sentence of text","A single text file (document)","A collection of documents","The unique set of words in a document"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — A collection of documents</div>
+<div class="exp-body">Key terminology:
+<br>• <strong>Document</strong> = a single piece of text data (e.g. one .txt file)
+<br>• <strong>Corpus</strong> = a collection of documents (doc1.txt, doc2.txt ... docN.txt)
+<br>• <strong>Vocabulary</strong> = all unique terms/words found across the entire corpus</div>`},
+
+  {s:null,t:"conceptual",
+   q:"10. Given vocabulary = ['desk','desks','table','plate','lion'] (indexed 0–4), what is the One-Hot vector for the word 'plate'?",
+   o:["[1,0,0,0,0]","[0,0,0,1,0]","[0,1,0,0,0]","[0,0,1,0,0]"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — [0,0,0,1,0]</div>
+<div class="exp-body"><strong>One-Hot Encoding assigns each word a vector of length |vocabulary|</strong>, with a 1 only at the word's index position:
+<br><br>Index: desk=0, desks=1, table=2, plate=3, lion=4
+<br><br>For 'plate' (index 3): <strong>[0, 0, 0, 1, 0]</strong>
+<br><br>The vector length equals the vocabulary size (5), and all values are 0 except at the word's own index.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"11. One-Hot Encoding solves which limitation of ASCII encoding but fails to solve which other limitation?",
+   o:["Solves semantic similarity; fails to fix variable length","Solves variable length; fails to capture semantic similarity between words","Solves sparsity; fails to fix variable length","Solves both problems completely"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Solves variable length; fails semantics</div>
+<div class="exp-body"><strong>Solved:</strong> Fixed-length representations (every word gets a vector of size |V|, regardless of character count).
+<br><br><strong>Still fails:</strong> 'desk' and 'table' get completely different one-hot vectors despite similar meanings. The dot product of any two different one-hot vectors = 0, so there is <em>no notion of similarity</em>.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"12. One-Hot Encoding produces 'sparse' representations. This means:",
+   o:["All vector values are large numbers","All vector values are 0 except for a single position that corresponds to the word","The vectors have different lengths for each word","The representation changes each time the corpus is updated"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — All zeros except one position</div>
+<div class="exp-body">In a vocabulary of 100,000 words, each word is represented by a vector with <strong>99,999 zeros and one 1</strong>. This is extremely sparse and memory-inefficient for large vocabularies. The dimensionality also grows proportionally with vocabulary size — another major limitation.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"13. Which of the following is a limitation of One-Hot Encoding that TF-IDF also shares?",
+   o:["Variable-length representations","Inability to capture semantic similarity between words","Requiring large neural networks","Dependency on labelled training data"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Cannot capture semantic similarity</div>
+<div class="exp-body">Both One-Hot Encoding and TF-IDF treat each word as independent and unique. <strong>Neither can capture that 'car' and 'automobile' are semantically similar</strong>. This is the shared fundamental limitation that motivates Word Embeddings.</div>`},
+
+  // ── SECTION 3: VECTOR SPACE MODEL & TF-IDF ──
+  {s:"Section 3 — Classical Vector Space Model & TF-IDF",t:"conceptual",
+   q:"14. The Vector Space Model was introduced by Gerard Salton in the 1970s. It was originally designed for:",
+   o:["Image classification tasks","Information retrieval — representing documents and queries as vectors and computing similarity","Training deep neural networks on text","Automatically generating summaries of academic papers"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Information retrieval</div>
+<div class="exp-body">The <strong>Vector Space Model (Gerard Salton, 1970s)</strong> was originally for <strong>information retrieval</strong>: documents and search queries were represented as vectors, and similar documents were retrieved by computing the similarity (cosine) between query and document vectors. TF-IDF was a key representation technique within this framework.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"15. In the Vector Space Model, how is the similarity between two term vectors (e.g. 'desk' and 'table') measured?",
+   o:["By counting shared characters","Using cosine similarity: Cosθ = (desk·table) / (||desk||·||table||)","By comparing their ASCII encodings","By measuring the difference in their term frequencies"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Cosine similarity</div>
+<div class="exp-body">In the VSM, each term is represented as a vector (counts across documents). Similarity is the <strong>angle θ between vectors</strong>:
+<br><br><span class="formula">Cosθ = (desk · table) / (||desk|| × ||table||)</span>
+<br><br>A smaller angle (closer to 0°) means greater similarity. A large angle (close to 90°) means the terms appear in very different contexts.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"16. The raw Term Frequency (TF) of a term t in document d is defined as:",
+   o:["The number of documents containing the term t","The count of occurrences of term t in document d","The log of total documents divided by documents containing t","The proportion of unique words that are t"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Count of occurrences of term t in document d</div>
+<div class="exp-body"><strong>Raw TF (tf_t,d)</strong> = f_t,d = frequency count of term t in document d.
+<br><br>Example: In D1 = 'desk and table', tf('desk', D1) = 1, tf('and', D1) = 1, tf('table', D1) = 1.
+<br><br>Normalized TF = f_t,d / (total words in d) = 1/3 ≈ 0.33 for each term in D1.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"17. Log normalization is applied to Term Frequency because:",
+   o:["Log makes computation faster","Relevance does not increase proportionally with term count — repeated occurrences are less informative","Log normalization removes stop words automatically","The log ensures values are always between 0 and 1"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Relevance does not increase proportionally</div>
+<div class="exp-body">If a word appears 100 times vs 10 times, it's not 10x more relevant. Log normalization dampens this effect:
+<br><br><span class="formula">W_tf = 1 + log(tf_t,d) if tf_t,d &gt; 0, else 0</span>
+<br><br>This ensures that high-frequency terms don't dominate disproportionately over moderately frequent ones.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"18. Inverse Document Frequency (IDF) assigns higher weights to terms that:",
+   o:["Appear in all documents (very common)","Appear in very few documents (rare terms)","Have the highest character count","Have the highest term frequency in a single document"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Appear in very few documents (rare terms)</div>
+<div class="exp-body"><span class="formula">IDF_t = log(N / df_t)</span>
+<br><br>Where N = total docs, df_t = docs containing term t.
+<br><br>If a term appears in <em>all</em> documents: IDF = log(N/N) = log(1) = <strong>0</strong> → no discriminative power.
+<br>If a term appears in only 1 of N docs: IDF = log(N/1) = log(N) → high weight → more distinctive.</div>`},
+
+  {s:null,t:"numerical",
+   q:"19. Corpus: D1='desk and table', D2='table and chair', D3='chair and lamp' (N=3). Using log₁₀, what is IDF for the term 'and'?",
+   o:["0.477","0.176","0.0","1.0"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — 0.0</div>
+<div class="exp-body"><strong>Step-by-step:</strong>
+<br>• N = 3 (total documents)
+<br>• df('and') = 3 (appears in D1, D2 AND D3)
+<br><br><span class="formula">IDF('and') = log₁₀(3/3) = log₁₀(1) = 0.0</span>
+<br><br>'And' appears in every document, so it provides NO discriminative information. TF-IDF correctly gives it a score of 0.</div>`},
+
+  {s:null,t:"numerical",
+   q:"20. Using the same corpus (N=3), what is IDF for the term 'desk' which appears in only D1?",
+   o:["0.0","0.176","0.477","1.0"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — 0.477</div>
+<div class="exp-body"><strong>Step-by-step:</strong>
+<br>• N = 3 (total documents)
+<br>• df('desk') = 1 (only appears in D1)
+<br><br><span class="formula">IDF('desk') = log₁₀(3/1) = log₁₀(3) ≈ 0.477</span>
+<br><br>'Desk' only appears in 1 document, making it highly distinctive and informative. Higher IDF = more important for distinguishing documents.</div>`},
+
+  {s:null,t:"numerical",
+   q:"21. For D1='desk and table' (3 terms), what is the normalized TF for 'desk'?",
+   o:["1.0","0.5","0.33","0.25"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — 0.33</div>
+<div class="exp-body"><strong>Step-by-step:</strong>
+<br><span class="formula">TF(t,d) = frequency of t in d / total terms in d</span>
+<br><br>• 'desk' appears <strong>1 time</strong> in D1
+<br>• D1 has <strong>3 total terms</strong>: 'desk', 'and', 'table'
+<br><br>TF('desk', D1) = 1/3 ≈ <strong>0.33</strong></div>`},
+
+  {s:null,t:"numerical",
+   q:"22. TF('desk', D1) = 0.33 and IDF('desk') = 0.477. What is the TF-IDF score for 'desk' in D1?",
+   o:["0.058","0.158","0.477","0.810"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — 0.158</div>
+<div class="exp-body"><strong>Step-by-step:</strong>
+<br><span class="formula">TF-IDF(t,d) = TF(t,d) × IDF(t)</span>
+<br><br>= 0.33 × 0.477 = <strong>≈ 0.158</strong>
+<br><br>This means 'desk' has a relatively high importance score in D1 because it's rare across the corpus (high IDF) and present in D1 (non-zero TF). The TF-IDF vector for 'desk' across docs = [0.158, 0.00, 0.00].</div>`},
+
+  {s:null,t:"numerical",
+   q:"23. TF-IDF for the word 'chair' in D1='desk and table': TF('chair',D1)=0, IDF('chair')=0.176. TF-IDF score = ?",
+   o:["0.176","0.058","0.0","0.33"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — 0.0</div>
+<div class="exp-body"><strong>Step-by-step:</strong>
+<br>TF-IDF = TF × IDF = <strong>0</strong> × 0.176 = <strong>0.0</strong>
+<br><br>Since 'chair' does not appear in D1 at all (TF=0), its TF-IDF contribution to D1 is zero. The IDF value is irrelevant when TF=0. This correctly means D1 has no information about 'chair'.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"24. TF-IDF combines TF and IDF to reflect:",
+   o:["Only the global rarity of a term","Only the local importance of a term in a document","Both local importance (TF) AND global rarity (IDF) of a term","The character frequency of terms"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — Both local importance and global rarity</div>
+<div class="exp-body"><strong>TF (local importance):</strong> A term appearing frequently in a document is important TO THAT document.
+<br><br><strong>IDF (global rarity):</strong> A term appearing in few documents is DISTINCTIVE across the corpus.
+<br><br>TF-IDF combines both: <span class="formula">W = TF × IDF</span>
+<br>High TF + High IDF = very important distinctive term in that document.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"25. Which is NOT a limitation of TF-IDF representations?",
+   o:["It cannot capture semantic similarity between synonyms like 'car' and 'automobile'","It produces sparse, high-dimensional vectors","It correctly handles out-of-vocabulary words by assigning zero weight","Word order and context are ignored (bag-of-words approach)"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — This is NOT a limitation (it IS a limitation, stated incorrectly)</div>
+<div class="exp-body">Wait — Option C says TF-IDF 'correctly handles' new words. This is <strong>FALSE</strong> — it CANNOT handle out-of-vocabulary words; adding new words requires recomputing the whole matrix.
+<br><br>The actual limitations ARE: A (no semantics), B (sparse/high-dimensional), and D (ignores word order/context).
+<br><br>So the option that is NOT a true limitation description = C, because TF-IDF <em>cannot</em> handle out-of-vocabulary words.</div>`},
+
+  // ── SECTION 4: DISTRIBUTIONAL SEMANTICS ──
+  {s:"Section 4 — Distributional Semantics & Word Embeddings Motivation",t:"conceptual",
+   q:"26. The Distributional Hypothesis (Harris 1954, Firth 1957) states:",
+   o:["Words are defined by their spelling patterns","The meaning of a word is derived from the context in which it is used; words with similar meanings appear in similar contexts","Word frequency alone determines word meaning","Only rare words carry meaningful information"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Meaning comes from context</div>
+<div class="exp-body">The <strong>Distributional Hypothesis</strong> is the theoretical foundation of word embeddings:
+<br><br>"<em>The meaning of a word is derived from the context in which it is used, and words with similar meanings are used in similar contexts.</em>"
+<br><br>This explains why words like 'noon' and 'midday' would appear in nearly identical contexts — proving they have similar meanings even without explicit definitions.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"27. From the 'tezguino' experiment by Lin (1998), the key observation was that:",
+   o:["Rare words are always more important","Context makes it easier to understand a word's meaning","Bigram models always outperform unigram models","Words that are spelled similarly always mean the same thing"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Context reveals meaning</div>
+<div class="exp-body">In the experiment, students who had never seen 'tezgüino' could infer it was an <em>alcoholic drink made from corn</em> (like beer/chicha) from context sentences:
+<br>• 'A bottle of ___ is on the table'
+<br>• '___ makes you drunk'
+<br>• 'We make ___ out of corn'
+<br><br><strong>Observation 1:</strong> Context makes it easier to understand a word's meaning.
+<br><strong>Observation 2:</strong> Words appearing in similar contexts may have similar meanings.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"28. The problem with using a simple count matrix to fill in context representations is that it suffers from the same limitations as:",
+   o:["Word2Vec","ASCII encoding","TF-IDF (sparsity, high-dimensionality, no generalization)","N-gram models"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — TF-IDF limitations</div>
+<div class="exp-body">Count-based matrices (where cells = 1 if a word appears in a context, 0 otherwise) suffer the same problems as TF-IDF: sparse representations, high dimensionality, fixed vocabulary. The solution proposed was to instead <strong>estimate probabilities</strong> of context words rather than just counting — leading to Language Models and eventually Word2Vec.</div>`},
+
+  // ── SECTION 5: LANGUAGE MODELS & N-GRAMS ──
+  {s:"Section 5 — Language Models & N-gram Probability",t:"conceptual",
+   q:"29. A Language Model provides a principled way to:",
+   o:["Reduce the size of a vocabulary","Quantify probabilities (uncertainties) associated with natural language sequences","Automatically label training data","Convert audio to text"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Quantify probabilities of language sequences</div>
+<div class="exp-body">A <strong>Language Model</strong> answers questions like: 'Given that we see "John feels", how likely is "happy" vs "habit" as the next word?'
+<br><br>General formula: <span class="formula">P(w₁w₂...wₙ) = P(w₁)·P(w₂|w₁)·...·P(wₙ|w₁...wₙ₋₁)</span>
+<br><br>N-gram models approximate this by conditioning only on the past N-1 words.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"30. In a Unigram Language Model (N=1), the probability of a word is estimated as:",
+   o:["Number of times the word follows the previous word / count of previous word","Count of word / total number of tokens in the collection","IDF of the word","1 / vocabulary size"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Count of word / total tokens</div>
+<div class="exp-body"><strong>Unigram Model (N=1):</strong>
+<br><span class="formula">P(word) = n_i / N</span>
+<br>• n_i = number of times the word occurs
+<br>• N = total number of word occurrences (tokens)
+<br><br>This is the simplest language model. It does NOT consider context — each word is treated independently.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"31. A Bigram Model (N=2) estimates the conditional probability of a word given the previous word as:",
+   o:["n(w) / N","n(w_{i-1}) / n(w_{i-1}, w_i)","n(w_{i-1}, w_i) / n(w_{i-1})","log(N / df_w)"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — n(w_{i-1}, w_i) / n(w_{i-1})</div>
+<div class="exp-body"><strong>Bigram Model (N=2):</strong>
+<br><span class="formula">P(w | w_{i-1}) = n(w_{i-1}, w_i) / n(w_{i-1})</span>
+<br>• n(w_{i-1}, w_i) = occurrences of the bigram pair
+<br>• n(w_{i-1}) = occurrences of the preceding word alone
+<br><br>Example: P('sword' | 'the') = count('the sword') / count('the')</div>`},
+
+  {s:null,t:"numerical",
+   q:"32. Corpus: D1='Frodo and Sam stabbed orcs', D2='Sam chased the orc with the sword', D3='Sam took the sword'. Total tokens = 16. What is P('Sam') using the unigram model?",
+   o:["1/16","2/16","3/16","4/16"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — 3/16</div>
+<div class="exp-body"><strong>Step-by-step:</strong>
+<br>Count 'Sam' appearances:
+<br>• D1: 'Sam' appears <strong>1 time</strong>
+<br>• D2: 'Sam' appears <strong>1 time</strong>
+<br>• D3: 'Sam' appears <strong>1 time</strong>
+<br>Total n('Sam') = 3
+<br><br>Total tokens N: D1(5) + D2(7) + D3(4) = 16
+<br><br><span class="formula">P('Sam') = 3/16</span></div>`},
+
+  {s:null,t:"numerical",
+   q:"33. Using the same corpus, 'the' appears 3 times total and bigram 'the sword' appears 2 times. What is P('sword' | 'the')?",
+   o:["1/3","2/3","1/2","3/2"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — 2/3</div>
+<div class="exp-body"><strong>Step-by-step:</strong>
+<br><span class="formula">P('sword' | 'the') = n('the', 'sword') / n('the')</span>
+<br><br>• n('the', 'sword') = 2 (in D2: 'with <u>the sword</u>', in D3: '<u>the sword</u>')
+<br>• n('the') = 3 (appears 3 times across all docs)
+<br><br>P('sword' | 'the') = 2/3 ≈ <strong>0.667</strong></div>`},
+
+  {s:null,t:"conceptual",
+   q:"34. Language models for N ≥ 3 are almost never used in practice because:",
+   o:["They require more than one GPU","Long phrases are extremely rare in corpora, making probability estimates unreliable (sparsity problem)","They are computationally too fast","They cannot handle the English language"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Sparsity: long phrases rarely appear in corpora</div>
+<div class="exp-body"><strong>The Sparsity Problem:</strong> The longer the phrase, the harder it is to estimate its true probability. For example, P('bilbo' | 'frodo ran around house found ring') — this 6-word context phrase has essentially zero occurrences even in massive corpora.
+<br><br>Result: impossible to compute reliable conditional probability estimates → N-gram LMs for N≥3 are practically useless.</div>`},
+
+  // ── SECTION 6: WORD2VEC & NEURAL EMBEDDINGS ──
+  {s:"Section 6 — Neural Word Embeddings & Word2Vec",t:"conceptual",
+   q:"35. Neural Word Embeddings were first presented in academic literature by:",
+   o:["Mikolov et al. in 2013 ('word2vec')","Bengio et al. in 2003 ('A Neural Probabilistic Language Model')","Salton in 1975 (Vector Space Model)","Harris in 1954 (Distributional Hypothesis)"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Bengio et al. in 2003</div>
+<div class="exp-body">Timeline of key developments:
+<br>• <strong>1954</strong>: Harris — Distributional Hypothesis
+<br>• <strong>1970s</strong>: Salton — Vector Space Model
+<br>• <strong>2003</strong>: Bengio et al. — <em>First neural probabilistic language model</em> (neural embeddings)
+<br>• <strong>2013</strong>: Mikolov et al. — word2vec (expanded and popularised the idea)
+<br><br>The term 'word2vec' is now used almost synonymously with neural word embeddings.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"36. In word2vec, the core iterative process involves (in order):",
+   o:["Train a CNN, extract feature maps, flatten, classify","Take a corpus, slide a window, identify center+context words, compute context probabilities, adjust vectors to increase probabilities","Count term frequencies, compute IDF, multiply TF×IDF","Tokenize, remove stop words, apply softmax, output classes"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — The word2vec sliding window process</div>
+<div class="exp-body">Word2Vec's 5-step process:
+<br><br><strong>1.</strong> Take a huge text corpus
+<br><strong>2.</strong> Go over text with a sliding window (moving one word at a time)
+<br><strong>3.</strong> At each step: identify the central word + context words
+<br><strong>4.</strong> For the central word: compute probabilities of context words
+<br><strong>5.</strong> Adjust the word vectors to increase these probabilities (via gradient descent)</div>`},
+
+  {s:null,t:"conceptual",
+   q:"37. For the sentence 'The quick brown fox jumps over the lazy dog' with window size k=2, when 'fox' is the center word, its context words are:",
+   o:["[The, quick]","[The, quick, fox, jumps]","[brown, quick] and [jumps, over]","[brown, jumps]"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — [brown, quick] and [jumps, over]</div>
+<div class="exp-body">With k=2, we take k=2 words to the left AND k=2 words to the right of the center word:
+<br><br>Sentence: The | quick | <strong>brown</strong> | [FOX] | <strong>jumps</strong> | over | the | lazy | dog
+<br>Wait — center = 'fox':
+<br>Left 2: brown, quick → <strong>[quick, brown]</strong>
+<br>Right 2: jumps, over → <strong>[jumps, over]</strong>
+<br><br>Context = [quick, brown, jumps, over] (shown as [brown, quick] and [jumps, over] in the lecture)</div>`},
+
+  {s:null,t:"conceptual",
+   q:"38. CBOW (Continuous Bag of Words) model architecture predicts:",
+   o:["Context words given the center word","The center/target word given surrounding context words","The next sentence given the current sentence","A document label from all its words"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Center/target word from context words</div>
+<div class="exp-body"><strong>CBOW:</strong> Context → Center (Target)
+<br>Given surrounding context words within a window of size 2k (k before + k after), predict the center word.
+<br><br><strong>Skip-gram:</strong> Center → Context (opposite direction)
+<br>Given the center word, predict surrounding context words.
+<br><br>Memory trick: <strong>C</strong>BOW = Context predicts Center.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"39. In the Skip-gram model, the task is to:",
+   o:["Use context words to predict the target word","Use the center word to predict surrounding context words","Use the entire sentence to predict the next sentence","Count occurrences of words in a sliding window"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Center word predicts context words</div>
+<div class="exp-body"><strong>Skip-gram</strong> reverses CBOW:
+<br>• Input: center/focus word (e.g. 'brown')
+<br>• Output: context words (e.g. The, quick, fox, jumps)
+<br><br>Skip-gram tends to work better on infrequent words and smaller datasets. CBOW is faster and works better for frequent words and larger datasets. The lecture focuses on <strong>CBOW</strong> but notes the idea is transferable.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"40. The Embedding Matrix W_input in the CBOW model has dimensions |V| × N, where:",
+   o:["|V| = embedding dimension, N = vocabulary size","N = number of neurons in hidden layer, |V| = vocabulary size","Both |V| and N represent the same thing","N = number of documents, |V| = vocabulary size"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — |V| = vocab size (input layer), N = hidden neurons (embedding dimension)</div>
+<div class="exp-body"><strong>W_input dimensions: |V| × N</strong>
+<br>• <strong>|V|</strong> = vocabulary size = length of one-hot encoded vector = number of rows
+<br>• <strong>N</strong> = number of neurons in hidden layer = embedding dimension = number of columns
+<br><br>In the tutorial example: |V|=6 (vocabulary of 6 words), N=4 (we chose 4 embedding dimensions) → W_input = 6×4 matrix.
+<br><br>N is typically much smaller than |V| (e.g. N=300 with |V|=10,000).</div>`},
+
+  {s:null,t:"numerical",
+   q:"41. In the CBOW tutorial example, vocabulary = ['barked','cat','chased','dog','mouse','ran'], N=4. When projecting 'cat' (index 1) using one-hot [0,1,0,0,0,0] through W_input, which row is selected?",
+   o:["Row 0","Row 1 → [0.4, 0.5, -0.1, 0.2]","Column 1","The average of all rows"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Row 1 → [0.4, 0.5, -0.1, 0.2]</div>
+<div class="exp-body"><strong>Key property:</strong> Multiplying a one-hot vector (with 1 at position i) by matrix W_input is equivalent to <strong>selecting row i</strong> of W_input.
+<br><br>• 'cat' has index = 1
+<br>• One-hot = [0,1,0,0,0,0]ᵀ
+<br>• Result = Row 1 of W_input = <strong>[0.4, 0.5, -0.1, 0.2]</strong>
+<br><br>This is V̂_cat — the current embedding vector for 'cat'.</div>`},
+
+  {s:null,t:"numerical",
+   q:"42. In the CBOW tutorial, V̂_cat = [0.4, 0.5, -0.1, 0.2] and V̂_mouse = [0.5, -0.4, 0.1, 0.1]. The average context vector v̂ for context ['cat','mouse'] is:",
+   o:["[0.9, 0.1, 0.0, 0.3]","[0.45, 0.05, 0.0, 0.15]","[0.4, 0.5, -0.1, 0.2]","[0.1, 0.9, 0.2, 0.3]"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — [0.45, 0.05, 0.0, 0.15]</div>
+<div class="exp-body"><strong>Step-by-step average calculation:</strong>
+<br><br>v̂ = (V̂_cat + V̂_mouse) / 2
+<br><br>• Position 1: (0.4 + 0.5) / 2 = <strong>0.45</strong>
+<br>• Position 2: (0.5 + (-0.4)) / 2 = (0.1) / 2 = <strong>0.05</strong>
+<br>• Position 3: ((-0.1) + 0.1) / 2 = 0 / 2 = <strong>0.0</strong>
+<br>• Position 4: (0.2 + 0.1) / 2 = 0.3 / 2 = <strong>0.15</strong>
+<br><br>v̂ = <strong>[0.45, 0.05, 0.0, 0.15]</strong></div>`},
+
+  {s:null,t:"conceptual",
+   q:"43. In the CBOW hidden layer, what type of activation function is used?",
+   o:["ReLU (Rectified Linear Unit)","Sigmoid","No activation (linear layer — just averaging)","Tanh"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — No activation (linear/averaging only)</div>
+<div class="exp-body">This is a <strong>key difference from traditional neural networks</strong>. The CBOW hidden layer is a <strong>linear layer</strong>:
+<br><br>It simply <em>averages</em> (or sums) the embedded context word vectors: v̂ = (v₁ + v₂ + ... + vₖ) / k
+<br><br>No non-linear activation like ReLU, sigmoid, or tanh is applied. The softmax activation comes only at the output layer to produce word probabilities.</div>`},
+
+  {s:null,t:"numerical",
+   q:"44. The Hidden Weight Matrix W_hidden in the tutorial CBOW has dimensions N×|V|. Given N=4 and |V|=6, and v̂=[0.45, 0.05, 0.0, 0.15], after multiplication the output logit vector z has length:",
+   o:["4","6","24","2"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — 6</div>
+<div class="exp-body"><strong>Matrix multiplication dimensions:</strong>
+<br><br>v̂ (1×4) × W_hidden (4×6) = z (1×<strong>6</strong>)
+<br><br>The output vector z has one score for each word in the vocabulary (|V|=6). These 6 raw scores (logits) are then passed through softmax to get probabilities for each of the 6 vocabulary words.
+<br><br>From the tutorial: z = [0.11, -0.06, 0.65, 0.085, 0.145, 0.04]</div>`},
+
+  {s:null,t:"conceptual",
+   q:"45. After training a word2vec CBOW model, what should you KEEP and what should you DISCARD?",
+   o:["Keep W_hidden (output matrix); discard W_input (embedding matrix)","Keep W_input (embedding matrix); discard W_hidden (output layer)","Keep both W_input and W_hidden for future predictions","Discard both; only save the softmax probabilities"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Keep W_input; discard W_hidden and output layer</div>
+<div class="exp-body">After training is complete:
+<br><br><strong>KEEP:</strong> W_input — the Embedding Matrix. Each row represents a word's learned dense vector representation with semantic meaning baked in.
+<br><br><strong>DISCARD:</strong> W_hidden and the output softmax layer — these were only needed during training to compute loss and update weights.
+<br><br>The retained W_input is then used for downstream NLP tasks (classification, similarity, etc.).</div>`},
+
+  {s:null,t:"conceptual",
+   q:"46. The famous word2vec result 'king − man + woman ≈ queen' demonstrates that:",
+   o:["Word2Vec fails on gendered analogies","Word2Vec embeddings capture semantic relationships as geometric offsets (vector arithmetic)","Only Skip-gram can do word analogies, not CBOW","TF-IDF representations also support such arithmetic"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Semantic relationships as geometric offsets</div>
+<div class="exp-body">This analogy shows that word2vec embeddings encode <strong>semantic relationships as directions/offsets in vector space</strong>:
+<br><br>• w_king − w_man captures 'royalty without maleness'
+<br>• Adding w_woman gives 'royalty with femaleness' ≈ w_queen
+<br><br>This type of vector arithmetic works because words used in similar contexts end up in similar regions of embedding space, and the <em>difference</em> between related pairs encodes the semantic relationship.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"47. Google's pre-trained word2vec model (available for download) was trained on which dataset and has what vocabulary size?",
+   o:["Wikipedia (~6 billion words), ~1 million words","Common Crawl (~840 billion words), ~2 million words","Google News (~10 billion words), ~3 million words/phrases","Google Books (~800 billion words), ~5 million words"],
+   a:2,
+   exp:`<div class="exp-title">✅ Answer: C — Google News, ~3 million words, ~10 billion words</div>
+<div class="exp-body">Google's pre-trained word2vec specifics:
+<br>• <strong>Corpus:</strong> Google News dataset (~10 billion words)
+<br>• <strong>Vocabulary:</strong> ~3 million words/phrases
+<br>• <strong>Dimensions available:</strong> 50D, 100D, 200D, 300D
+<br>• <strong>Most popular:</strong> 300D — best for capturing word relationships
+<br>• Available via Gensim: <code>KeyedVectors.load_word2vec_format()</code></div>`},
+
+  // ── SECTION 7: ALTERNATIVES & COMPARISON ──
+  {s:"Section 7 — Alternatives to Word2Vec & Comparison",t:"conceptual",
+   q:"48. GloVe (Global Vectors for Word Representation) differs from word2vec because it uses:",
+   o:["A sliding window with neural predictions","Count-based matrix factorizations (global co-occurrence statistics)","Sub-word character n-gram information","Transformer-based contextual attention"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Count-based matrix factorizations</div>
+<div class="exp-body">Comparison of embedding methods:
+<br><br>• <strong>word2vec:</strong> Predictive model (CBOW/Skip-gram) — local context windows
+<br>• <strong>GloVe:</strong> Count-based matrix factorization — uses GLOBAL co-occurrence statistics
+<br>• <strong>FastText:</strong> Extends word2vec with sub-word (character n-gram) info
+<br>• <strong>ELMo/BERT:</strong> Contextual embeddings (transformer-based)
+<br><br>GloVe is trained on Common Crawl and Wikipedia at 50D, 100D, 200D, 300D dimensions.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"49. FastText extends word2vec by incorporating:",
+   o:["Attention mechanisms","Sub-word (character n-gram) information — allowing handling of out-of-vocabulary words","Transformer self-attention layers","Document-level context instead of local windows"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Sub-word character n-gram information</div>
+<div class="exp-body"><strong>FastText</strong> (Facebook, 300D, trained on Common Crawl + Wikipedia) extends word2vec by breaking words into character n-grams.
+<br><br><strong>Key advantage:</strong> Can handle <em>out-of-vocabulary words</em> — since any new word can be decomposed into known character n-grams. Also handles morphologically rich languages better (e.g. 'running', 'runner', 'ran' all share sub-word features).
+<br><br>This is a significant improvement over standard word2vec.</div>`},
+
+  {s:null,t:"conceptual",
+   q:"50. ELMo and BERT differ fundamentally from word2vec and GloVe because they produce:",
+   o:["Smaller, more compact static embeddings","Contextual word embeddings — the same word gets a different vector depending on the surrounding context","Only sentence-level embeddings, not word-level","Embeddings trained only on supervised labelled data"],
+   a:1,
+   exp:`<div class="exp-title">✅ Answer: B — Contextual word embeddings</div>
+<div class="exp-body"><strong>Word2Vec/GloVe:</strong> Static embeddings — 'bank' always gets the same vector regardless of context.
+<br><br><strong>ELMo/BERT (transformer-based, contextual):</strong> 'bank' gets a <em>different</em> vector in:
+<br>• 'river <strong>bank</strong>' (financial institution meaning suppressed)
+<br>• '<strong>bank</strong> account' (financial meaning activated)
+<br><br>ELMo/BERT use variable (million+) dimensional representations and are trained on huge corpora. LLMs (like GPT, Claude) are built on this transformer-based contextual embedding approach.</div>`}
+];
+
+let answered = new Array(Q.length).fill(false);
+let correct_arr = new Array(Q.length).fill(false);
+let current_filter = 'all';
+
+function getVisible(){
+  return Q.map((q,i)=>i).filter(i=> current_filter==='all' || Q[i].t===current_filter);
+}
+
+function setFilter(f, el){
+  current_filter = f;
+  document.querySelectorAll('.ctrl-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderQuiz();
+}
+
+function renderQuiz(){
+  const container = document.getElementById('quiz');
+  container.innerHTML = '';
+  let lastSection = '';
+  const visible = getVisible();
+
+  visible.forEach(i=>{
+    const q = Q[i];
+    if(q.s && q.s !== lastSection){
+      lastSection = q.s;
+      const sh = document.createElement('div');
+      sh.className = 'section-header';
+      sh.textContent = q.s;
+      container.appendChild(sh);
+    }
+    const card = document.createElement('div');
+    card.className = `q-card type-${q.t}`;
+    card.id = `card-${i}`;
+
+    const tagLabel = q.t.charAt(0).toUpperCase()+q.t.slice(1);
+    const optsHTML = q.o.map((o,oi)=>{
+      let cls = 'opt-btn';
+      if(answered[i]){
+        if(oi===q.a) cls+=' correct';
+        else if(oi !== q.a && answered[i] && correct_arr[i]===false && Q[i]._chosen===oi) cls+=' wrong';
+      }
+      return `<button class="opt-btn${answered[i] && oi===q.a?' correct':''}${answered[i] && Q[i]._chosen===oi && oi!==q.a?' wrong':''}" onclick="selectAnswer(${i},${oi})" ${answered[i]?'disabled':''}>${String.fromCharCode(65+oi)}. ${o}</button>`;
+    }).join('');
+
+    card.innerHTML = `
+      <div class="q-meta">
+        <span class="q-num">Q${i+1}</span>
+        <span class="q-tag tag-${q.t}">${tagLabel}</span>
+      </div>
+      <div class="q-text">${q.q}</div>
+      <div class="options">${optsHTML}</div>
+      <div class="explanation${answered[i]?' show':''}" id="exp-${i}">${q.exp}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function selectAnswer(qi, chosen){
+  if(answered[qi]) return;
+  answered[qi] = true;
+  Q[qi]._chosen = chosen;
+  if(chosen === Q[qi].a) correct_arr[qi] = true;
+  updateStats();
+  renderQuiz();
+  setTimeout(()=>{
+    const exp = document.getElementById(`exp-${qi}`);
+    if(exp) exp.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }, 100);
+}
+
+function updateStats(){
+  const vis = getVisible();
+  const att = vis.filter(i=>answered[i]).length;
+  const cor = vis.filter(i=>correct_arr[i]).length;
+  document.getElementById('s-att').textContent = att;
+  document.getElementById('s-cor').textContent = cor;
+  document.getElementById('s-pct').textContent = att>0?Math.round(cor/att*100)+'%':'0%';
+  const total_att = answered.filter(Boolean).length;
+  document.getElementById('prog').style.width = Math.round(total_att/Q.length*100)+'%';
+}
+
+function resetAll(){
+  answered = new Array(Q.length).fill(false);
+  correct_arr = new Array(Q.length).fill(false);
+  Q.forEach(q=>delete q._chosen);
+  updateStats();
+  renderQuiz();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+renderQuiz();
+</script>
+</body>
+</html>

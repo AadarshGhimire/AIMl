@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6CS012 — Lecture 06 MCQ Exam Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e11;
+  --surface: #16161a;
+  --surface2: #1e1e24;
+  --border: #2a2a35;
+  --border2: #3a3a48;
+  --text: #e8e8f0;
+  --muted: #7a7a92;
+  --accent: #7c6af7;
+  --accent-dim: #3d3478;
+  --accent-glow: rgba(124,106,247,0.15);
+  --green: #3ecf8e;
+  --green-dim: #1a4a37;
+  --green-text: #3ecf8e;
+  --red: #f87171;
+  --red-dim: #4a1f1f;
+  --red-text: #f87171;
+  --amber: #fbbf24;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+/* noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+.page { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 5rem; position: relative; z-index: 1; }
+
+/* ── HEADER ── */
+.hero {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem 2.25rem 1.75rem;
+  margin-bottom: 2rem;
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(124,106,247,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+  line-height: 1.25;
+}
+.hero p { font-size: 13px; color: var(--muted); }
+
+/* ── STATS ── */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.75rem; }
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1rem;
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-num.green { color: var(--green); }
+.stat-num.accent { color: var(--accent); }
+.stat-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* ── PROGRESS ── */
+.prog-wrap { margin-bottom: 1.75rem; }
+.prog-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px; font-family: 'DM Mono', monospace; }
+.prog-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 2px; transition: width 0.4s ease; width: 0%; }
+
+/* ── FILTERS ── */
+.filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.75rem; align-items: center; }
+.filter-label { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-right: 4px; }
+.ftag {
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+.ftag:hover { border-color: var(--accent); color: var(--accent); }
+.ftag.on { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.reset-btn {
+  font-size: 11px; padding: 4px 12px; border-radius: 20px;
+  border: 1px solid var(--border2); background: transparent;
+  color: var(--muted); cursor: pointer; margin-left: auto;
+  font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+}
+.reset-btn:hover { border-color: var(--red); color: var(--red); }
+
+/* ── QUESTION CARDS ── */
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.2s;
+}
+.q-card.correct { border-color: var(--green); }
+.q-card.wrong { border-color: var(--red); }
+
+.q-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 1rem; }
+.q-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.q-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  min-width: 30px;
+  padding-top: 2px;
+}
+.q-text { font-size: 14px; color: var(--text); flex: 1; line-height: 1.6; }
+
+/* ── OPTIONS ── */
+.options { display: flex; flex-direction: column; gap: 7px; padding-left: 42px; }
+.opt {
+  font-size: 13px;
+  padding: 9px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  line-height: 1.5;
+  font-family: 'DM Sans', sans-serif;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.opt:hover:not(:disabled) { border-color: var(--accent); color: var(--text); background: var(--accent-glow); }
+.opt:disabled { cursor: default; }
+.opt.is-correct { border-color: var(--green) !important; background: var(--green-dim) !important; color: var(--green-text) !important; }
+.opt.is-wrong { border-color: var(--red) !important; background: var(--red-dim) !important; color: var(--red-text) !important; }
+.opt-letter {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  min-width: 18px;
+  padding-top: 2px;
+  opacity: 0.6;
+}
+
+/* ── EXPLANATION ── */
+.exp-box {
+  margin-top: 12px;
+  padding-left: 42px;
+  display: none;
+}
+.exp-box.show { display: block; }
+.exp-inner {
+  background: var(--surface2);
+  border-left: 3px solid var(--green);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.exp-inner.wrong-border { border-left-color: var(--red); }
+.exp-inner strong { color: var(--text); font-weight: 500; }
+.exp-inner code {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  background: rgba(255,255,255,0.07);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--amber);
+}
+
+/* ── RESULT BADGE ── */
+.result-icon {
+  font-size: 11px;
+  margin-top: 10px;
+  padding-left: 42px;
+  display: none;
+  font-family: 'DM Mono', monospace;
+}
+.result-icon.show { display: block; }
+.tick { color: var(--green); }
+.cross { color: var(--red); }
+
+/* ── FINAL SCORE PANEL ── */
+.score-panel {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+.score-panel.show { display: block; }
+.score-big { font-family: 'Fraunces', serif; font-size: 64px; font-weight: 600; line-height: 1; }
+.score-big.excellent { color: var(--green); }
+.score-big.good { color: var(--amber); }
+.score-big.poor { color: var(--red); }
+.score-msg { font-size: 14px; color: var(--muted); margin-top: 0.5rem; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ── RESPONSIVE ── */
+@media(max-width: 560px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .hero h1 { font-size: 22px; }
+  .options { padding-left: 0; }
+  .exp-box { padding-left: 0; }
+  .result-icon { padding-left: 0; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-label">6CS012 — AI &amp; Machine Learning · 2025</div>
+    <h1>Lecture 06 — Exam Prep<br>MCQ Question Bank</h1>
+    <p>50 questions · Data, Normalisation, Batch Norm, Weight Init, Regularisation, CNN Architectures, Transfer Learning</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="s-total">50</div><div class="stat-lbl">Total</div></div>
+    <div class="stat"><div class="stat-num" id="s-done">0</div><div class="stat-lbl">Answered</div></div>
+    <div class="stat"><div class="stat-num green" id="s-correct">0</div><div class="stat-lbl">Correct</div></div>
+    <div class="stat"><div class="stat-num accent" id="s-score">0%</div><div class="stat-lbl">Score</div></div>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-meta">
+      <span id="prog-txt">0 of 50 answered</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+  </div>
+
+  <div class="filters">
+    <span class="filter-label">Filter:</span>
+    <button class="ftag on" onclick="setFilter('all',this)">All (50)</button>
+    <button class="ftag" onclick="setFilter('Data',this)">Data &amp; Aug</button>
+    <button class="ftag" onclick="setFilter('Norm',this)">Normalisation</button>
+    <button class="ftag" onclick="setFilter('BN',this)">Batch Norm</button>
+    <button class="ftag" onclick="setFilter('WI',this)">Weight Init</button>
+    <button class="ftag" onclick="setFilter('Reg',this)">Regularisation</button>
+    <button class="ftag" onclick="setFilter('Arch',this)">Architectures</button>
+    <button class="ftag" onclick="setFilter('TL',this)">Transfer Learning</button>
+    <button class="reset-btn" onclick="resetAll()">↺ Reset all</button>
+  </div>
+
+  <div id="q-container"></div>
+  <div class="score-panel" id="score-panel">
+    <div class="score-big" id="score-big">—</div>
+    <div class="score-msg" id="score-msg"></div>
+  </div>
+</div>
+
+<script>
+const QS = [
+  {t:"Data",n:1,q:"What is the primary purpose of splitting a dataset into train, validation, and test sets?",opts:["To reduce the total size of the dataset","To monitor overfitting, tune hyperparameters, and give an unbiased final evaluation","To increase training speed by using smaller batches","To normalise the data before training"],ans:1,exp:"The <strong>train set</strong> updates weights via backpropagation. The <strong>validation set</strong> monitors overfitting during training and enables early stopping. The <strong>test set</strong> is used only after training to give a completely unbiased measure of generalisation — it is <em>never</em> used during training or hyperparameter tuning."},
+  {t:"Data",n:2,q:"Overfitting in terms of bias and variance is correctly described as:",opts:["High bias and high variance","Low bias and low variance","High variance and low bias","Low variance and high bias"],ans:2,exp:"<strong>Overfitting</strong> = the model memorises training data (low bias on training set) but fails on new data (high variance). Diagnostic: training loss is low, validation loss is high — a widening gap between the two curves signals overfitting."},
+  {t:"Data",n:3,q:"Which describes underfitting?",opts:["Low training error, high validation error","High training error and high validation error","Low training error and low validation error","High training error and low validation error"],ans:1,exp:"<strong>Underfitting</strong> = the model is too simple to capture patterns. It fails on <em>both</em> training and validation data — both errors are HIGH. This is high bias, low variance. The loss curves start high and don't converge well."},
+  {t:"Data",n:4,q:"In early stopping, the 'patience' parameter controls:",opts:["The learning rate decay schedule","The number of epochs to wait without validation improvement before halting","The dropout rate applied each epoch","The minimum batch size used"],ans:1,exp:"<strong>Patience n</strong> = the number of consecutive epochs training may continue with NO improvement in validation accuracy/loss. If no improvement for n epochs, training stops and the best weights are restored. Common values: patience = 10–20."},
+  {t:"Data",n:5,q:"Data augmentation is primarily used to:",opts:["Speed up forward-pass computation","Reduce the number of model parameters","Artificially expand the dataset and prevent overfitting","Replace the validation set"],ans:2,exp:"Data augmentation creates modified versions of existing images (flips, rotations, colour shifts, noise, cutout) to <strong>increase dataset diversity without collecting new labelled data</strong>. It prevents overfitting, improves generalisation, and makes the model robust to real-world variations."},
+  {t:"Data",n:6,q:"Which of the following is a colour transformation (not a geometric transformation) used in data augmentation?",opts:["Horizontal flipping","Rotation by a small angle","Brightness adjustment","Random cropping"],ans:2,exp:"<strong>Brightness adjustment</strong> is a <em>colour</em> transformation. Geometric transformations alter the spatial layout: flipping, rotation, cropping, scaling, translation. Colour transformations alter pixel intensity/colour: brightness, contrast, colour shift."},
+  {t:"Data",n:7,q:"The 'Cutout' augmentation technique works by:",opts:["Randomly rotating the image 180°","Removing individual pixels one by one","Masking a rectangular region to force the model to use other image regions","Blending two images together"],ans:2,exp:"<strong>Cutout</strong> zeros out a random rectangular region of the image. This forces the model not to rely on any single region — acting as a spatial regularisation that encourages learning from multiple parts of the image simultaneously."},
+  {t:"Data",n:8,q:"Why must normalisation be performed AFTER the train/val/test split?",opts:["It makes computation faster","It prevents data leakage — test statistics must not influence training parameters","It reduces the number of model features","It simplifies the backpropagation calculation"],ans:1,exp:"<strong>Data leakage</strong>: if you normalise before splitting, the mean/std from ALL data (including validation/test) contaminates training. Correct workflow: (1) Split → (2) compute mean &amp; std on <em>training set only</em> → (3) apply those same parameters to val and test sets."},
+  {t:"Norm",n:9,q:"For image pixels (range 0–255), min-max normalisation simplifies to:",opts:["x' = (x − mean) / std","x' = x / 255","x' = x × 255","x' = (x − 128) / 128"],ans:1,exp:"Min-max formula: <code>x' = (xi − min) / (max − min)</code>. With min=0, max=255: <code>x' = xi / 255</code>. This scales all pixel values to [0, 1]."},
+  {t:"Norm",n:10,q:"Z-score (standardisation) normalisation transforms data so that:",opts:["All values are between 0 and 1","Mean = 0 and standard deviation = 1","Median = 0 and variance = 0","All values are between −1 and 1"],ans:1,exp:"Z-score: <code>x' = (xi − mean) / std</code>. Result: mean = 0, std = 1. Unlike min-max, values are NOT bounded to a fixed range — outliers still exist but have large z-scores."},
+  {t:"Norm",n:11,q:"Large unnormalised input values cause training problems because:",opts:["They make the loss function non-convex","The same learning rate η is applied to all weights, so large parameters dominate gradient updates → exploding or vanishing gradients","They reduce the number of training samples available","They prevent use of ReLU activations"],ans:1,exp:"With one learning rate η, the update <code>Δw = η × ∂L/∂w</code> scales with weight magnitude. Large w → large gradient → <strong>exploding</strong>. Very small w → tiny gradient → <strong>vanishing</strong>. Normalisation keeps all parameters on a similar scale for stable updates."},
+  {t:"Norm",n:12,q:"Input normalisation directly benefits which layer of the network?",opts:["All layers equally","Only the output layer","Only the first hidden layer","All convolutional layers uniformly"],ans:2,exp:"Input normalisation only directly improves the distribution seen by the <strong>first hidden layer</strong>. Deeper layers still receive potentially un-normalised intermediate activations — this is the <em>internal covariate shift</em> problem that Batch Normalisation was designed to solve."},
+  {t:"BN",n:13,q:"In Batch Normalisation Step 1, what quantities are computed from the mini-batch?",opts:["Learning rate and momentum","Mean (μB) and variance (σ²B) of the net inputs z","The dropout mask for each neuron","Softmax probabilities for each class"],ans:1,exp:"Step 1: <code>μB = (1/B)Σzi</code> and <code>σ²B = (1/B)Σ(zi − μB)²</code>. Then normalise: <code>z'i = (zi − μB) / √(σ²B + ε)</code>, where ε is a tiny constant (e.g., 1e-8) for numerical stability."},
+  {t:"BN",n:14,q:"In Batch Normalisation Step 2, γ (gamma) and β (beta) are:",opts:["Fixed hyperparameters set before training","The batch mean and variance","Learnable parameters controlling scale and shift of the normalised output","The dropout rate and learning rate"],ans:2,exp:"After normalising z→z', the output is <code>a'i = γi · z'i + βi</code>. <strong>γ</strong> (scale) controls spread; <strong>β</strong> (shift) controls mean. Both are <em>learnable</em> and updated by backpropagation — the network can learn to undo normalisation if needed."},
+  {t:"BN",n:15,q:"During TEST TIME, Batch Normalisation uses:",opts:["A fresh mini-batch of test images to compute statistics","Mean and variance of the entire test set","Running mean and variance accumulated during training","Random values for mean and variance"],ans:2,exp:"No mini-batch exists at test time. Batch Norm uses the <strong>running (exponential moving) mean and variance</strong> accumulated during training. Forgetting to call <code>model.eval()</code> in PyTorch is a very common bug that causes incorrect inference."},
+  {t:"BN",n:16,q:"Which is a key CON of Batch Normalisation?",opts:["It dramatically slows convergence","It requires much more memory than dropout","It behaves differently during training vs testing — a frequent source of bugs","It cannot be applied to convolutional layers"],ans:2,exp:"BatchNorm uses <em>batch</em> statistics (μB, σ²B) during training but <em>running</em> statistics at inference. Not switching to eval mode = using batch stats at test time = incorrect predictions. This train/test discrepancy is one of the most common bugs in deep learning implementations."},
+  {t:"BN",n:17,q:"Which of the following is NOT a benefit of Batch Normalisation?",opts:["Improves gradient flow through deep networks","Allows the use of higher learning rates","Permanently removes the need for all other regularisation techniques","Reduces internal covariate shift"],ans:2,exp:"BatchNorm <em>reduces</em> the need for dropout but does NOT permanently replace all regularisation. For highly overfit-prone tasks, dropout and L2 regularisation may still be needed alongside BatchNorm. The real benefits: stabilises training, faster convergence, more robust to weight initialisation."},
+  {t:"BN",n:18,q:"What is the role of ε (epsilon) in the BatchNorm normalisation formula?",opts:["Controls the learning rate for γ and β","A tiny constant added to the variance to prevent division by zero","Sets the initial value of γ","Determines the mini-batch size B"],ans:1,exp:"Formula: <code>z'i = (zi − μB) / √(σ²B + ε)</code>. If σ²B = 0 (all values identical in a channel for a batch), the denominator would be zero → NaN. ε (typically 1e-5 or 1e-8) prevents this, ensuring <strong>numerical stability</strong>."},
+  {t:"WI",n:19,q:"Why should all weights NOT be initialised to zero?",opts:["Zero weights make computation slower","All neurons compute identical outputs and gradients — the symmetry problem makes the network behave like a single linear unit","Zero weights cause undefined loss values","It prevents batch normalisation from working"],ans:1,exp:"<strong>Symmetry problem</strong>: all weights = 0 → all neurons produce the same output → same gradient for all → all update identically. Symmetry is never broken. The network never learns different features — it effectively acts as a single neuron regardless of depth."},
+  {t:"WI",n:20,q:"Xavier (Glorot) initialisation is designed for which activation functions?",opts:["ReLU and Leaky ReLU","Sigmoid and Tanh","Softmax output layer only","Linear activation (no non-linearity)"],ans:1,exp:"<strong>Xavier / Glorot</strong> (2010): ensures variance of activations remains constant across layers. Designed for <em>symmetric</em> activations like <strong>Sigmoid</strong> and <strong>Tanh</strong> that operate around zero. Formula: <code>W ~ N(0, 2/(n_in + n_out))</code>."},
+  {t:"WI",n:21,q:"He initialisation is preferred for ReLU because:",opts:["ReLU keeps all values positive, so no scaling is needed","ReLU zeroes out negative inputs, halving the effective variance — He init doubles the Xavier variance (2/n_in) to compensate","ReLU has a larger gradient than Sigmoid everywhere","He init is computationally cheaper than Xavier"],ans:1,exp:"ReLU <code>f(x) = max(0,x)</code> zeroes out ~50% of inputs, approximately halving the variance of activations. <strong>He init</strong> (He et al., 2015) uses variance = <code>2/n_in</code> — double Xavier's — to compensate. Formula: <code>W ~ N(0, 2/n_in)</code>. Prevents dying ReLU by keeping alive neuron magnitudes appropriate."},
+  {t:"WI",n:22,q:"A layer has 512 input neurons. Using He initialisation (normal distribution), what variance is used?",opts:["1/512","2/512","1/256","2/256"],ans:1,exp:"He init normal: <code>W ~ N(0, 2/n_in)</code>. With n_in = 512: variance = <code>2/512 = 1/256 ≈ 0.0039</code>, std = <code>√(2/512) ≈ 0.0625</code>. Each weight is sampled from this normal distribution to preserve variance through the ReLU layer."},
+  {t:"WI",n:23,q:"What happens if weights are initialised too large?",opts:["The network learns too slowly from the start","Gradients explode during backpropagation, causing the loss to diverge","The network severely underfits the training data","Batch normalisation statistics become incorrect"],ans:1,exp:"Large initial weights → large activations → large gradients (∂L/∂w ∝ w) → <strong>exploding gradients</strong>. Loss diverges to NaN or infinity. Conversely: very small weights → vanishing gradients → negligible weight updates in early layers → extremely slow learning."},
+  {t:"Reg",n:24,q:"The formal definition of regularisation is:",opts:["Any technique that increases model capacity to fit complex patterns","Any modification to a learning algorithm that reduces generalisation error but not necessarily training error","A mandatory data preprocessing step","A method to increase training accuracy by adding more layers"],ans:1,exp:"Regularisation: <em>'any modification to a learning algorithm to reduce its generalisation error but not its training error.'</em> It deliberately adds bias (may slightly increase training error) to reduce variance (better generalisation). Examples: dropout, L1/L2, early stopping, BatchNorm."},
+  {t:"Reg",n:25,q:"The L2 (Ridge) regularisation penalised loss function is:",opts:["L_reg(θ) = L(θ) + λΣ|θk|","L_reg(θ) = L(θ) + λΣθk²","L_reg(θ) = L(θ) − λΣθk²","L_reg(θ) = L(θ) × λΣθk²"],ans:1,exp:"<strong>L2 (Ridge)</strong>: <code>L_reg(θ) = L(θ) + λΣθk²</code>. Adds a penalty proportional to the square of weights. During gradient descent, each weight is <em>decayed linearly</em> toward zero (weight decay). λ controls strength — larger λ = simpler model. L1 (Lasso) uses |θk| instead."},
+  {t:"Reg",n:26,q:"Dropout with p = 0.5 means:",opts:["50% of weights are permanently zeroed during training","Each neuron independently has a 50% probability of being zeroed in each forward pass","The learning rate is halved every epoch","50% of training data is randomly discarded each epoch"],ans:1,exp:"<strong>Dropout p=0.5</strong>: each neuron independently has a 50% chance of being set to 0 (dropped) on each training forward pass. The mask is random and changes every iteration — different sub-networks are trained each time. The STRUCTURE (layer count, neuron count) is unchanged."},
+  {t:"Reg",n:27,q:"During INFERENCE (testing), how does dropout behave?",opts:["The same p% of neurons are dropped as during training","Dropout is NOT applied — all neurons are active, weights typically scaled by 1/(1−p)","Only the first layer applies dropout at test time","Dropout rate is halved at test time"],ans:1,exp:"At inference, dropout is <strong>disabled</strong> — all neurons contribute. To compensate for more active neurons than during training, weights are scaled by <code>1/(1−p)</code> (or activations by (1−p) during training in inverted dropout). PyTorch/Keras handle this automatically with <code>model.eval()</code>."},
+  {t:"Reg",n:28,q:"Which regularisation technique simply monitors validation loss and stops training when it stops improving?",opts:["L2 weight decay","Dropout","Early stopping","Batch Normalisation"],ans:2,exp:"<strong>Early stopping</strong>: the simplest regularisation technique. Monitor validation loss during training. When it stops improving for n (patience) consecutive epochs, halt training and restore the best weights. It prevents the model from overfitting further into the training data."},
+  {t:"Arch",n:29,q:"In a CNN, which layers have LEARNABLE PARAMETERS updated by backpropagation?",opts:["CONV and Pooling layers","ReLU and Pooling layers","CONV and Fully Connected (FCN) layers","ReLU and Fully Connected layers"],ans:2,exp:"<strong>Learnable parameters</strong>: CONV layers (filter weights &amp; biases) and FCN/Dense layers (weight matrices &amp; biases). <strong>No parameters</strong>: ReLU (fixed non-linear function) and MaxPooling (fixed downsampling). Only layers that perform weighted combinations of inputs have learnable parameters."},
+  {t:"Arch",n:30,q:"The final FCN layer in a CNN outputs a volume of size:",opts:["H × W × Channels","1 × 1 × Number of Classes","Batch Size × H × W","Number of filters × H × W"],ans:1,exp:"After all conv/pooling, the classification head outputs one score per class: shape <code>[1 × 1 × N_classes]</code>. Softmax converts these to probabilities. The class with the highest probability is the prediction."},
+  {t:"Arch",n:31,q:"AlexNet (2012) achieved what top-5 error rate on ImageNet?",opts:["28.2%","16.4%","7.3%","6.7%"],ans:1,exp:"<strong>AlexNet (2012)</strong>: 16.4% top-5 error — a massive drop from the 28.2% traditional methods baseline of 2010. This breakthrough proved deep CNNs on GPUs were the future of computer vision. Key: 8 layers, ReLU, dropout, GPU training, data augmentation."},
+  {t:"Arch",n:32,q:"Why did AlexNet use ReLU instead of sigmoid?",opts:["Softmax cannot follow sigmoid","Sigmoid saturates (gradient→0) causing vanishing gradients; ReLU has constant gradient=1 for positive inputs → faster training","ReLU produces probability outputs","Sigmoid was not available in the GPU libraries of 2012"],ans:1,exp:"<strong>Sigmoid</strong> saturates for large |x| → derivative → 0 → vanishing gradients in deep networks → very slow training. <strong>ReLU</strong> <code>f(x)=max(0,x)</code> has derivative = 1 for positive inputs (no saturation) → gradients flow freely → 6× faster convergence than sigmoid on AlexNet's training set."},
+  {t:"Arch",n:33,q:"AlexNet has approximately how many total parameters?",opts:["~6 million","~25 million","~60 million","~138 million"],ans:2,exp:"<strong>AlexNet ≈ 60 million parameters</strong>. Breakdown: 5 conv layers ≈ 2.5M; FC6 ≈ 37.75M (6×6×256×4096+4096); FC7 ≈ 16.78M (4096×4096+4096); FC8 ≈ 4.1M (4096×1000+1000). Fully connected layers dominate parameter count — a major inefficiency."},
+  {t:"Arch",n:34,q:"The Inception Module in GoogLeNet applies which convolution sizes IN PARALLEL?",opts:["Only 3×3 filters at different strides","1×1, 3×3, and 5×5 convolutions plus max pooling, outputs concatenated","7×7 and 11×11 convolutions in parallel","Sequential stacks of 3×3 filters"],ans:1,exp:"The <strong>Inception Module</strong>: applies <code>1×1</code>, <code>3×3</code>, and <code>5×5</code> convolutions simultaneously plus a <code>3×3 max pool</code> branch, then concatenates all outputs along the channel dimension. This enables multi-scale feature extraction — capturing fine details and broad patterns simultaneously."},
+  {t:"Arch",n:35,q:"A 1×1 convolution applied to a feature map of H×W×256 using 64 filters produces output of size:",opts:["H×W×256","(H−1)×(W−1)×64","H×W×64","H/2 × W/2 × 64"],ans:2,exp:"A <strong>1×1 convolution</strong> only transforms the <em>channel</em> dimension — spatial dimensions (H, W) are unchanged. 64 filters → 64 output channels. Result: <code>H×W×64</code>. This is dimensionality reduction: 256→64 channels, reducing computation for subsequent convolutions by 4×."},
+  {t:"Arch",n:36,q:"GoogLeNet (Inception V1) uses only ~6M parameters vs AlexNet's ~60M. The two main reasons are:",opts:["Fewer layers and smaller input images","1×1 convolutions for dimensionality reduction + Global Average Pooling replacing large FC layers","Removing all pooling layers and using stride-2 convolutions","Using binary weights instead of floating point"],ans:1,exp:"(1) <strong>1×1 convolutions</strong> before expensive 3×3/5×5 ops dramatically cut parameters (e.g., 820K → ~119K for one branch). (2) <strong>Global Average Pooling</strong> replaces the large FC layers used by AlexNet and VGG, removing millions of parameters. GoogLeNet is 22 layers deep with 10× fewer parameters than AlexNet."},
+  {t:"Arch",n:37,q:"Auxiliary classifiers in GoogLeNet serve what purpose?",opts:["Speed up inference by providing shortcut predictions","Inject additional gradient signals at intermediate layers to help early layers learn — combating vanishing gradients","Act as dropout by randomly choosing one classifier per batch","Allow the model to output multiple predictions simultaneously"],ans:1,exp:"At 22 layers deep, gradients vanish before reaching early layers via normal backprop. <strong>Auxiliary classifiers</strong> attach two extra softmax loss branches at intermediate points. During training, these inject fresh gradient signals into earlier layers. They are <em>removed at inference</em> — only the main output is used."},
+  {t:"Arch",n:38,q:"VGG-16 uses exclusively which filter size in its convolutional layers?",opts:["1×1","5×5","3×3","7×7"],ans:2,exp:"<strong>VGG-16</strong>: all 13 conv layers use <code>3×3</code> filters (stride 1, padding 1). Key insight: stacking multiple 3×3 layers gives the same receptive field as one larger filter with fewer parameters and more non-linearity. Three stacked 3×3 layers = 7×7 effective receptive field."},
+  {t:"Arch",n:39,q:"VGG-16 has approximately how many total parameters, and where is the majority?",opts:["~60M, mostly in convolutional layers","~138M, mostly in the three fully connected layers","~25M, equally distributed","~6M, mostly in inception modules"],ans:1,exp:"<strong>VGG-16 ≈ 138M parameters</strong>. FC1 (7×7×512→4096) ≈ 102.8M parameters alone. FC2 ≈ 16.8M. FC3 ≈ 4.1M. All 13 conv layers together ≈ 14.7M. This extreme parameter inefficiency in FC layers motivated Global Average Pooling in ResNet/GoogLeNet."},
+  {t:"Arch",n:40,q:"ResNet's skip connection combines the input x and the layer output F(x) via:",opts:["Multiplication: F(x) × x","Concatenation along channel dimension: [F(x), x]","Element-wise addition: F(x) + x","Subtraction: F(x) − x"],ans:2,exp:"<strong>Residual block</strong>: output = <code>F(x) + x</code>. The block learns the <em>residual</em> F(x) = H(x) − x, where H(x) is the desired transformation. Element-wise addition requires F(x) and x to have the same shape (handled by 1×1 projections when dimensions change). This allows gradient highways directly to early layers."},
+  {t:"Arch",n:41,q:"ResNet-50 has approximately how many parameters?",opts:["~60 million","~138 million","~25 million","~6 million"],ans:2,exp:"<strong>ResNet-50 ≈ 25M parameters</strong>. Components: initial conv ≈ 9.5K; residual blocks 1–4: 173K + 986K + 5.9M + 11.8M ≈ 18.9M; final FC layer ≈ 2.05M. Despite being 50 layers deep (vs VGG-16's 16), ResNet-50 has far fewer parameters due to GAP and bottleneck blocks with 1×1 convolutions."},
+  {t:"Arch",n:42,q:"Global Average Pooling (GAP) used in ResNet takes a feature map of 7×7×2048 and produces:",opts:["A flattened vector of 7×7×2048 = 100,352 values","A vector of 2048 values (one per channel, averaged over 7×7 spatial locations)","A feature map of 1×1×2048","A vector of 7×7 = 49 values"],ans:1,exp:"<strong>GAP</strong>: for each of the 2048 channels, compute the average of all 7×7 = 49 spatial values → one scalar per channel. Output: vector of length <strong>2048</strong>. This goes to the final FC layer. Parameter saving: GAP + FC (2049×1000 = 2.05M) vs flattening + FC (100,352×1000 = 100.4M)."},
+  {t:"Arch",n:43,q:"The ImageNet competition ended in 2017 because:",opts:["The dataset ran out of new images","Computational costs became prohibitive","Model error rates dropped below human-level performance (~5%), making the benchmark no longer discriminating","The organisers moved to object detection only"],ans:2,exp:"Human-level ImageNet performance ≈ 5% top-5 error. SENet (2017) achieved 2.3% — well below human. Once AI surpassed humans on the benchmark, it ceased to be a meaningful discriminator between methods. The competition had achieved its purpose of driving computer vision research."},
+  {t:"Arch",n:44,q:"The vanishing gradient problem means:",opts:["Gradients become NaN due to overflow","Gradients decay exponentially through many layers during backprop — early layers learn very slowly or not at all","The learning rate automatically becomes too small","Mini-batch gradients are too noisy to be useful"],ans:1,exp:"<strong>Vanishing gradients</strong>: backprop multiplies gradients by weights and activation derivatives at each layer. If these values are &lt;1 (sigmoid derivative max is 0.25), repeated multiplication → exponential decay → near-zero gradients in early layers → no learning. Solutions: ReLU, BatchNorm, skip connections (ResNet), He init."},
+  {t:"Arch",n:45,q:"Computing parameters for VGG-16 Conv1_1: 64 filters of size 3×3 on an input with 3 channels. The parameter count is:",opts:["3×3×64 = 576","3×3×3×64 = 1,728","(3×3×3 + 1) × 64 = 1,792","3×3×64 + 64 = 640"],ans:2,exp:"Conv layer parameters = <code>(filter_h × filter_w × input_channels + 1_bias) × num_filters</code>. For Conv1_1: <code>(3×3×3 + 1) × 64 = 28 × 64 = 1,792</code>. The +1 accounts for the bias term per filter. This matches the lecture table."},
+  {t:"Arch",n:46,q:"Without 1×1 convolutions, a 5×5×128 conv on a 32×32×256 input has how many parameters?",opts:["5×5×128 = 3,200","5×5×256×128 = 819,200 (~820K)","5×5×128+128 = 3,328","256×128 = 32,768"],ans:1,exp:"Conv parameters = <code>(filter_h × filter_w × input_channels) × num_filters</code> (ignoring bias for simplicity). <code>5×5×256×128 = 820,000 ≈ 820K parameters</code>. This is the expensive case. Using a 1×1 convolution to reduce 256→64 channels first reduces total parameters to ~118,784 — a 7× reduction."},
+  {t:"Arch",n:47,q:"ResNet's residual block learns F(x). What does F(x) represent mathematically?",opts:["The full desired output H(x)","The residual: F(x) = H(x) − x (difference between desired output and the identity)","The activation function applied to x","The pooling operation over x"],ans:1,exp:"Rearranging: output = F(x) + x → F(x) = output − x = <code>H(x) − x</code>. F(x) is the <strong>residual</strong> — how much the transformation needs to add to the identity to reach the desired output. If no transformation is needed, F(x) → 0, and the block becomes an identity mapping. Learning small residuals is easier than learning full transformations."},
+  {t:"TL",n:48,q:"Transfer learning is best described as:",opts:["Training a model from scratch on a new dataset","Improving learning on a new task by reusing weights (knowledge) from a related pre-trained task","Transferring model weights between different hardware (CPU→GPU)","Using multiple GPUs to train one model faster"],ans:1,exp:"<strong>Transfer learning</strong>: a model pre-trained on a large dataset (e.g., ImageNet, 14M images) has learned useful features. These weights are adapted to a new, typically smaller dataset and task. This reduces training time, data requirements, and often improves performance by leveraging generalised visual knowledge."},
+  {t:"TL",n:49,q:"When adapting a VGG-16 pre-trained on ImageNet (1000 classes) to a 5-class medical imaging problem, what MUST be changed?",opts:["The number of convolutional layers","The input image resolution","The final FC layer output dimension (1000→5)","All batch normalisation parameters"],ans:2,exp:"The pre-trained final layer outputs 1000 class scores. For a 5-class problem, you <strong>must replace this with a new FC layer with 5 output neurons</strong>. This new layer is randomly initialised and trained from scratch. The rest of the network can be frozen or fine-tuned."},
+  {t:"TL",n:50,q:"Why does transfer learning work across different image domains?",opts:["All image datasets have identical statistical distributions","Low-level features (edges, textures, blobs) are universal across images and learned in early conv layers — they transfer well even between different domains","Pre-trained models have unlimited capacity to memorise any domain","ImageNet contains examples from every real-world category"],ans:1,exp:"Deep networks learn hierarchical features: <strong>early layers</strong> learn universal low-level features (edges, colour gradients, textures) present in ANY image. <strong>Middle layers</strong>: textures and parts. <strong>Late layers</strong>: task-specific high-level features. Since low-level features are universal, early-layer weights from ImageNet transfer effectively even to medical imaging or satellite imagery."}
+];
+
+let answered = {}, correctCount = 0, doneCount = 0, currentFilter = 'all';
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.ftag').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderQuestions();
+}
+
+function getFiltered() {
+  if (currentFilter === 'all') return QS;
+  return QS.filter(q => q.t === currentFilter);
+}
+
+function renderQuestions() {
+  const container = document.getElementById('q-container');
+  container.innerHTML = '';
+  getFiltered().forEach(q => {
+    const idx = q.n - 1;
+    const isAnswered = answered[idx] !== undefined;
+    const isCorrect = isAnswered && answered[idx] === q.ans;
+    const card = document.createElement('div');
+    card.className = 'q-card' + (isAnswered ? (isCorrect ? ' correct' : ' wrong') : '');
+    card.id = 'card-' + idx;
+
+    const optsHTML = q.opts.map((o, oi) => {
+      let cls = 'opt';
+      let dis = isAnswered ? 'disabled' : '';
+      if (isAnswered) {
+        if (oi === q.ans) cls += ' is-correct';
+        else if (oi === answered[idx] && answered[idx] !== q.ans) cls += ' is-wrong';
+      }
+      return `<button class="${cls}" ${dis} onclick="doAnswer(${idx},${oi},${q.ans})"><span class="opt-letter">${String.fromCharCode(65+oi)}</span>${o}</button>`;
+    }).join('');
+
+    const expShow = isAnswered ? 'show' : '';
+    const expBorder = isAnswered && !isCorrect ? 'wrong-border' : '';
+    const iconShow = isAnswered ? 'show' : '';
+    const iconHtml = isAnswered ? (isCorrect
+      ? `<span class="tick">✓ Correct</span>`
+      : `<span class="cross">✗ Incorrect — correct answer: ${String.fromCharCode(65+q.ans)}</span>`) : '';
+
+    card.innerHTML = `
+      <div class="q-top">
+        <span class="q-num">Q${q.n}</span>
+        <span class="q-text">${q.q}</span>
+        <span class="q-badge">${q.t}</span>
+      </div>
+      <div class="options">${optsHTML}</div>
+      <div class="result-icon ${iconShow}" id="icon-${idx}">${iconHtml}</div>
+      <div class="exp-box ${expShow}" id="exp-${idx}">
+        <div class="exp-inner ${expBorder}"><strong>Explanation:</strong> ${q.exp}</div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function doAnswer(idx, chosen, correct) {
+  if (answered[idx] !== undefined) return;
+  answered[idx] = chosen;
+  doneCount++;
+  if (chosen === correct) correctCount++;
+
+  const card = document.getElementById('card-' + idx);
+  if (!card) return;
+  card.className = 'q-card ' + (chosen === correct ? 'correct' : 'wrong');
+  card.querySelectorAll('.opt').forEach((b, oi) => {
+    b.disabled = true;
+    if (oi === correct) b.classList.add('is-correct');
+    else if (oi === chosen && chosen !== correct) b.classList.add('is-wrong');
+  });
+  const icon = document.getElementById('icon-' + idx);
+  const exp = document.getElementById('exp-' + idx);
+  const q = QS[idx];
+  icon.innerHTML = chosen === correct
+    ? `<span class="tick">✓ Correct</span>`
+    : `<span class="cross">✗ Incorrect — correct answer: ${String.fromCharCode(65+correct)}</span>`;
+  icon.classList.add('show');
+  exp.classList.add('show');
+  if (chosen !== correct) exp.querySelector('.exp-inner').classList.add('wrong-border');
+  updateStats();
+  if (doneCount === QS.length) showFinalScore();
+}
+
+function updateStats() {
+  document.getElementById('s-done').textContent = doneCount;
+  document.getElementById('s-correct').textContent = correctCount;
+  const pct = doneCount > 0 ? Math.round((correctCount / doneCount) * 100) : 0;
+  document.getElementById('s-score').textContent = pct + '%';
+  const progPct = Math.round((doneCount / QS.length) * 100);
+  document.getElementById('prog-fill').style.width = progPct + '%';
+  document.getElementById('prog-txt').textContent = doneCount + ' of ' + QS.length + ' answered';
+  document.getElementById('prog-pct').textContent = progPct + '%';
+}
+
+function showFinalScore() {
+  const pct = Math.round((correctCount / QS.length) * 100);
+  const panel = document.getElementById('score-panel');
+  const big = document.getElementById('score-big');
+  const msg = document.getElementById('score-msg');
+  big.textContent = pct + '%';
+  big.className = 'score-big ' + (pct >= 80 ? 'excellent' : pct >= 60 ? 'good' : 'poor');
+  const msgs = pct >= 80
+    ? 'Excellent — you are well prepared for the exam.'
+    : pct >= 60
+    ? 'Good progress. Review the explanations for questions you missed.'
+    : 'Keep revising. Focus on the topics where you made errors and retry.';
+  msg.textContent = correctCount + ' / ' + QS.length + ' correct · ' + msgs;
+  panel.classList.add('show');
+  panel.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function resetAll() {
+  answered = {}; correctCount = 0; doneCount = 0;
+  document.getElementById('score-panel').classList.remove('show');
+  updateStats();
+  renderQuestions();
+}
+
+renderQuestions();
+</script>
+</body>
+</html>
